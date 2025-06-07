@@ -1,0 +1,180 @@
+@startuml AviationEnterpriseERD_v2
+
+' Настройки отображения
+hide circle
+skinparam linetype ortho
+
+' Сущности (таблицы)
+
+entity "Цеха (Workshops)" as workshops {
+  * id : INT <<PK>>
+  --
+  * name : VARCHAR(100)
+  * director_id : INT <<FK>> 
+}
+
+entity "Участки (Sections)" as sections {
+  * id : INT <<PK>>
+  --
+  * name : VARCHAR(100)
+  * workshop_id : INT <<FK>>
+}
+
+entity "Мастера участков (SectionMasters)" as section_masters {
+  * section_id : INT <<PK>> <<FK>>
+  * employee_id : INT <<PK>> <<FK>>
+}
+
+entity "Бригады (Brigades)" as brigades {
+  * id : INT <<PK>>
+  --
+  * name : VARCHAR(100)
+  * section_id : INT <<FK>>
+  ' Убрано foreman_id (перенесено в EmployeeAssignment)
+}
+
+entity "Категории изделий (ProductCategories)" as product_categories {
+  * id : INT <<PK>>
+  --
+  * name : VARCHAR(100)
+}
+
+entity "Типы изделий (ProductTypes)" as product_types {
+  * id : INT <<PK>>
+  --
+  * name : VARCHAR(100)
+  * category_id : INT <<FK>>
+}
+
+entity "Изделия (Products)" as products {
+  * id : INT <<PK>>
+  --
+  * serial_num : VARCHAR(50)
+  * type_id : INT <<FK>>
+  * workshop_id : INT <<FK>>
+}
+
+entity "Атрибуты изделий (ProductAttributes)" as product_attributes {
+  * id : INT <<PK>>
+  --
+  * name : VARCHAR(100)
+  * category_id : INT <<FK>>
+}
+
+entity "Значения атрибутов (ProductAttributeValues)" as attribute_values {
+  * id : INT <<PK>>
+  --
+  * product_id : INT <<FK>>
+  * attribute_id : INT <<FK>>
+  * value : VARCHAR(255)
+}
+
+entity "Работы по сборке (AssemblyJobs)" as assembly_jobs {
+  * id : INT <<PK>>
+  --
+  * name : VARCHAR(100)
+  * section_id : INT <<FK>>
+}
+
+entity "Производственный процесс (ProductionProcess)" as production_process {
+  * id : INT <<PK>>
+  --
+  * product_id : INT <<FK>>
+  * job_id : INT <<FK>>
+  * brigade_id : INT <<FK>>
+  * start_date : DATE
+  * end_date : DATE
+}
+
+entity "Должности (Positions)" as positions {
+  * id : INT <<PK>>
+  --
+  * name : VARCHAR(100)
+  * category : ENUM("Рабочие", "ИТП")
+}
+
+entity "Сотрудники (Employees)" as employees {
+  * id : INT <<PK>>
+  --
+  * name : VARCHAR(100)
+  * position_id : INT <<FK>>
+  * hire_date : DATE
+}
+
+entity "Рабочие (Workers)" as workers {
+  * employee_id : INT <<PK>> <<FK>>
+  * brigade_id : INT <<PK>> <<FK>>
+  --
+  * is_foreman : BOOLEAN
+}
+
+entity "Лаборатории (TestLabs)" as test_labs {
+  * id : INT <<PK>>
+  --
+  * name : VARCHAR(100)
+}
+
+entity "Оборудование (Equipment)" as equipment {
+  * id : INT <<PK>>
+  --
+  * name : VARCHAR(100)
+  * lab_id : INT <<FK>>
+}
+
+entity "Испытания (Tests)" as tests {
+  * id : INT <<PK>>
+  --
+  * product_id : INT <<FK>>
+  * lab_id : INT <<FK>>
+  * result : ENUM("Успешно", "Неудачно", "В процессе")
+  * start_date : DATE
+  * end_date : DATE
+}
+
+entity "Испытатели (Testers)" as testers {
+  * test_id : INT <<PK>> <<FK>>
+  * employee_id : INT <<PK>> <<FK>>
+}
+
+entity "Используемое оборудование (TestEquipment)" as test_equipment {
+  * test_id : INT <<PK>> <<FK>>
+  * equipment_id : INT <<PK>> <<FK>>
+  --
+  * usage_hours : DECIMAL(5,2)
+}
+
+' Связи между сущностями
+
+workshops ||--o{ sections : "1:N"
+sections ||--o{ section_masters : "1:N"
+section_masters }o--|| employees : "N:1"
+sections ||--o{ brigades : "1:N"
+sections ||--o{ assembly_jobs : "1:N"
+product_categories ||--o{ product_types : "1:N"
+product_categories ||--o{ product_attributes : "1:N"
+product_types ||--o{ products : "1:N"
+products ||--o{ attribute_values : "1:N"
+products ||--o{ production_process : "1:N"
+products ||--o{ tests : "1:N"
+assembly_jobs ||--o{ production_process : "1:N"
+brigades ||--o{ production_process : "1:N"
+positions ||--o{ employees : "1:N"
+employees ||--o{ workshops : "director"
+employees ||--o{ workers : "1:N"
+workers }o--|| brigades : "N:1"
+employees ||--o{ testers : "N:M"
+test_labs ||--o{ equipment : "1:N"
+test_labs ||--o{ tests : "1:N"
+tests ||--o{ testers : "1:N"
+tests ||--o{ test_equipment : "1:N"
+equipment ||--o{ test_equipment : "1:N"
+product_attributes ||--o{ attribute_values : "1:N"
+
+' Дополнительные пояснения
+' note top of workers
+'   Ограничение UNIQUE(brigade_id, is_foreman)
+'   где is_foreman = TRUE гарантирует,
+'   что в бригаде только один бригадир
+' end note
+
+@enduml
