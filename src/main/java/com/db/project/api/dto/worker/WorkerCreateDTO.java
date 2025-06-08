@@ -19,5 +19,6 @@ public class WorkerCreateDTO {
     @NotNull(message = "Brigade ID is required")
     private Integer brigadeId;
     
-    private Boolean isForeman;
+    @Builder.Default
+    private Boolean isForeman = false;
 } 

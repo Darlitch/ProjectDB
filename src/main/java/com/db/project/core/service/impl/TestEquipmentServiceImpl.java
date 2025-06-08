@@ -34,6 +34,7 @@ public class TestEquipmentServiceImpl implements TestEquipmentService {
     @Transactional
     public TestEquipmentDTO create(TestEquipmentCreateDTO equipmentDTO) {
         TestEquipment equipment = TestEquipment.builder()
+                .id(new TestEquipmentId(equipmentDTO.getTestId(), equipmentDTO.getEquipmentId()))
                 .test(testService.getEntityById(equipmentDTO.getTestId()))
                 .equipment(equipmentService.getEntityById(equipmentDTO.getEquipmentId()))
                 .build();

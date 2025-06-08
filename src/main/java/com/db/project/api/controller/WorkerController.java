@@ -39,22 +39,22 @@ public class WorkerController {
 //        return workerService.getAllByEmployeeId(employeeId);
 //    }
 
-    @GetMapping("/{employeeId}/{brigadeId}")
-    public WorkerDTO getById(@PathVariable Integer employeeId, @PathVariable Integer brigadeId) {
+    @GetMapping("/{brigadeId}/{employeeId}")
+    public WorkerDTO getById(@PathVariable Integer brigadeId, @PathVariable Integer employeeId) {
         return workerService.getById(brigadeId, employeeId);
     }
 
-    @PatchMapping("/{employeeId}/{brigadeId}")
+    @PatchMapping("/{brigadeId}/{employeeId}")
     public WorkerDTO update(
-            @PathVariable Integer employeeId,
             @PathVariable Integer brigadeId,
+            @PathVariable Integer employeeId,
             @Valid @RequestBody WorkerUpdateDTO workerDTO) {
         return workerService.update(brigadeId, employeeId, workerDTO);
     }
 
-    @DeleteMapping("/{employeeId}/{brigadeId}")
+    @DeleteMapping("/{brigadeId}/{employeeId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Integer employeeId, @PathVariable Integer brigadeId) {
+    public void delete(@PathVariable Integer brigadeId, @PathVariable Integer employeeId) {
         workerService.delete(brigadeId, employeeId);
     }
 } 

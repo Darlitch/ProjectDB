@@ -34,6 +34,7 @@ public class TesterServiceImpl implements TesterService {
     @Transactional
     public TesterDTO create(TesterCreateDTO testerDTO) {
         Tester tester = Tester.builder()
+                .id(new TesterId(testerDTO.getTestId(), testerDTO.getEmployeeId()))
                 .test(testService.getEntityById(testerDTO.getTestId()))
                 .employee(employeeService.getEntityById(testerDTO.getEmployeeId()))
                 .build();

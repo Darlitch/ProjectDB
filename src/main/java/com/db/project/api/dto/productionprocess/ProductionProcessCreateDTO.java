@@ -23,6 +23,9 @@ public class ProductionProcessCreateDTO {
     @NotNull(message = "Job ID is required")
     private Integer jobId;
 
-    private LocalDate startDate;
-    private LocalDate endDate;
+    @Builder.Default
+    private LocalDate startDate = LocalDate.now();
+
+    @Builder.Default
+    private LocalDate endDate = null;
 } 

@@ -24,6 +24,9 @@ public class TestCreateDTO {
     @NotNull(message = "Result is required")
     private TestResult result;
     
-    private LocalDate startDate;
-    private LocalDate endDate;
+    @Builder.Default
+    private LocalDate startDate = LocalDate.now();
+
+    @Builder.Default
+    private LocalDate endDate = null;
 } 

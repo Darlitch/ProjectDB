@@ -34,6 +34,7 @@ public class WorkerServiceImpl implements WorkerService {
     @Transactional
     public WorkerDTO create(WorkerCreateDTO workerDTO) {
         Worker worker = Worker.builder()
+                .id(new WorkerId(workerDTO.getBrigadeId(), workerDTO.getEmployeeId()))
                 .brigade(brigadeService.getEntityById(workerDTO.getBrigadeId()))
                 .employee(employeeService.getEntityById(workerDTO.getEmployeeId()))
                 .isForeman(workerDTO.getIsForeman())

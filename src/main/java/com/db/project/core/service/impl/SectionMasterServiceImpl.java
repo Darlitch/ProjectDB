@@ -34,6 +34,7 @@ public class SectionMasterServiceImpl implements SectionMasterService {
     @Transactional
     public SectionMasterDTO create(SectionMasterCreateDTO masterDTO) {
         SectionMaster master = SectionMaster.builder()
+                .id(new SectionMasterId(masterDTO.getSectionId(), masterDTO.getEmployeeId()))
                 .section(sectionService.getEntityById(masterDTO.getSectionId()))
                 .employee(employeeService.getEntityById(masterDTO.getEmployeeId()))
                 .build();

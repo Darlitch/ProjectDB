@@ -31,7 +31,6 @@ public class Test {
     @JoinColumn(name = "lab_id", nullable = false)
     private TestLab lab;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "result", nullable = false)
     private TestResult result;
 
