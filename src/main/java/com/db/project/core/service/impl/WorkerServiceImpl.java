@@ -47,15 +47,15 @@ public class WorkerServiceImpl implements WorkerService {
         return workerMapper.toDto(workerRepository.findAll());
     }
 
-    @Override
-    public List<WorkerDTO> getAllByBrigadeId(Integer brigadeId) {
-        return workerMapper.toDto(workerRepository.findAllByBrigadeId(brigadeId));
-    }
-
-    @Override
-    public List<WorkerDTO> getAllByEmployeeId(Integer employeeId) {
-        return workerMapper.toDto(workerRepository.findAllByEmployeeId(employeeId));
-    }
+//    @Override
+//    public List<WorkerDTO> getAllByBrigadeId(Integer brigadeId) {
+//        return workerMapper.toDto(workerRepository.findAllByBrigadeId(brigadeId));
+//    }
+//
+//    @Override
+//    public List<WorkerDTO> getAllByEmployeeId(Integer employeeId) {
+//        return workerMapper.toDto(workerRepository.findAllByEmployeeId(employeeId));
+//    }
 
     @Override
     public WorkerDTO getById(Integer brigadeId, Integer employeeId) {

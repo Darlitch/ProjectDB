@@ -29,15 +29,15 @@ public class TesterController {
         return testerService.getAll();
     }
 
-    @GetMapping("/by-lab/{labId}")
-    public List<TesterDTO> getAllByLabId(@PathVariable Integer labId) {
-        return testerService.getAllByLabId(labId);
-    }
-
-    @GetMapping("/by-employee/{employeeId}")
-    public List<TesterDTO> getAllByEmployeeId(@PathVariable Integer employeeId) {
-        return testerService.getAllByEmployeeId(employeeId);
-    }
+//    @GetMapping("/by-lab/{labId}")
+//    public List<TesterDTO> getAllByLabId(@PathVariable Integer labId) {
+//        return testerService.getAllByLabId(labId);
+//    }
+//
+//    @GetMapping("/by-employee/{employeeId}")
+//    public List<TesterDTO> getAllByEmployeeId(@PathVariable Integer employeeId) {
+//        return testerService.getAllByEmployeeId(employeeId);
+//    }
 
     @GetMapping("/{employeeId}/{labId}")
     public TesterDTO getById(@PathVariable Integer employeeId, @PathVariable Integer labId) {

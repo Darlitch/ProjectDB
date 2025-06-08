@@ -46,15 +46,15 @@ public class TestEquipmentServiceImpl implements TestEquipmentService {
         return testEquipmentMapper.toDto(testEquipmentRepository.findAll());
     }
 
-    @Override
-    public List<TestEquipmentDTO> getAllByTestId(Integer testId) {
-        return testEquipmentMapper.toDto(testEquipmentRepository.findAllByTestId(testId));
-    }
-
-    @Override
-    public List<TestEquipmentDTO> getAllByEquipmentId(Integer equipmentId) {
-        return testEquipmentMapper.toDto(testEquipmentRepository.findAllByEquipmentId(equipmentId));
-    }
+//    @Override
+//    public List<TestEquipmentDTO> getAllByTestId(Integer testId) {
+//        return testEquipmentMapper.toDto(testEquipmentRepository.findAllByTestId(testId));
+//    }
+//
+//    @Override
+//    public List<TestEquipmentDTO> getAllByEquipmentId(Integer equipmentId) {
+//        return testEquipmentMapper.toDto(testEquipmentRepository.findAllByEquipmentId(equipmentId));
+//    }
 
     @Override
     public TestEquipmentDTO getById(Integer testId, Integer equipmentId) {

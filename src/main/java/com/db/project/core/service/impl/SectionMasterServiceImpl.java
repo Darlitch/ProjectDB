@@ -46,15 +46,15 @@ public class SectionMasterServiceImpl implements SectionMasterService {
         return sectionMasterMapper.toDto(sectionMasterRepository.findAll());
     }
 
-    @Override
-    public List<SectionMasterDTO> getAllBySectionId(Integer sectionId) {
-        return sectionMasterMapper.toDto(sectionMasterRepository.findAllBySectionId(sectionId));
-    }
-
-    @Override
-    public List<SectionMasterDTO> getAllByEmployeeId(Integer employeeId) {
-        return sectionMasterMapper.toDto(sectionMasterRepository.findAllByEmployeeId(employeeId));
-    }
+//    @Override
+//    public List<SectionMasterDTO> getAllBySectionId(Integer sectionId) {
+//        return sectionMasterMapper.toDto(sectionMasterRepository.findAllBySectionId(sectionId));
+//    }
+//
+//    @Override
+//    public List<SectionMasterDTO> getAllByEmployeeId(Integer employeeId) {
+//        return sectionMasterMapper.toDto(sectionMasterRepository.findAllByEmployeeId(employeeId));
+//    }
 
     @Override
     public SectionMasterDTO getById(Integer sectionId, Integer employeeId) {

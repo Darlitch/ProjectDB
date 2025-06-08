@@ -1,5 +1,10 @@
 package com.db.project.api.dto.section;
 
+import com.db.project.api.dto.assemblyjob.AssemblyJobShortDTO;
+import com.db.project.api.dto.brigade.BrigadeShortDTO;
+import com.db.project.api.dto.employee.EmployeeShortDTO;
+import com.db.project.api.dto.sectionmaster.SectionMasterShortDTO;
+import com.db.project.api.dto.workshop.WorkshopShortDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,9 +20,9 @@ import java.util.List;
 public class SectionDTO {
     private Integer id;
     private String name;
-    private Integer workshopId;
-    private Integer headId;
-    private List<Integer> brigadeIds;
-    private List<Integer> masterIds;
-    private List<Integer> assemblyJobIds;
+    private WorkshopShortDTO workshop;
+    private EmployeeShortDTO head;
+    private List<BrigadeShortDTO> brigades;
+    private List<SectionMasterShortDTO> masters;
+    private List<AssemblyJobShortDTO> assemblyJobs;
 } 

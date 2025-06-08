@@ -1,5 +1,8 @@
 package com.db.project.api.dto.brigade;
 
+import com.db.project.api.dto.productionprocess.ProductionProcessShortDTO;
+import com.db.project.api.dto.section.SectionShortDTO;
+import com.db.project.api.dto.worker.WorkerShortDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,7 +18,7 @@ import java.util.List;
 public class BrigadeDTO {
     private Integer id;
     private String name;
-    private Integer sectionId;
-    private List<Integer> workerIds;
-    private List<Integer> productionProcessIds;
+    private SectionShortDTO section;
+    private List<WorkerShortDTO> workers;
+    private List<ProductionProcessShortDTO> productionProcesses;
 } 

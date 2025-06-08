@@ -13,9 +13,9 @@ public interface SectionMasterService {
 
     List<SectionMasterDTO> getAll();
 
-    List<SectionMasterDTO> getAllBySectionId(Integer sectionId);
-
-    List<SectionMasterDTO> getAllByEmployeeId(Integer employeeId);
+//    List<SectionMasterDTO> getAllBySectionId(Integer sectionId);
+//
+//    List<SectionMasterDTO> getAllByEmployeeId(Integer employeeId);
 
     SectionMasterDTO getById(Integer sectionId, Integer employeeId);
 

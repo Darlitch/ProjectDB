@@ -13,9 +13,9 @@ public interface WorkerService {
 
     List<WorkerDTO> getAll();
 
-    List<WorkerDTO> getAllByBrigadeId(Integer brigadeId);
-
-    List<WorkerDTO> getAllByEmployeeId(Integer employeeId);
+//    List<WorkerDTO> getAllByBrigadeId(Integer brigadeId);
+//
+//    List<WorkerDTO> getAllByEmployeeId(Integer employeeId);
 
     WorkerDTO getById(Integer brigadeId, Integer employeeId);
 

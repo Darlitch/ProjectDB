@@ -25,8 +25,10 @@ public class TestLab {
     private String name;
 
     @OneToMany(mappedBy = "lab", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<Equipment> equipment = new ArrayList<>();
 
     @OneToMany(mappedBy = "lab")
+    @Builder.Default
     private List<Test> tests = new ArrayList<>();
 } 

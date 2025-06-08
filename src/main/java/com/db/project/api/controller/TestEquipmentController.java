@@ -29,15 +29,15 @@ public class TestEquipmentController {
         return testEquipmentService.getAll();
     }
 
-    @GetMapping("/by-test/{testId}")
-    public List<TestEquipmentDTO> getAllByTestId(@PathVariable Integer testId) {
-        return testEquipmentService.getAllByTestId(testId);
-    }
-
-    @GetMapping("/by-equipment/{equipmentId}")
-    public List<TestEquipmentDTO> getAllByEquipmentId(@PathVariable Integer equipmentId) {
-        return testEquipmentService.getAllByEquipmentId(equipmentId);
-    }
+//    @GetMapping("/by-test/{testId}")
+//    public List<TestEquipmentDTO> getAllByTestId(@PathVariable Integer testId) {
+//        return testEquipmentService.getAllByTestId(testId);
+//    }
+//
+//    @GetMapping("/by-equipment/{equipmentId}")
+//    public List<TestEquipmentDTO> getAllByEquipmentId(@PathVariable Integer equipmentId) {
+//        return testEquipmentService.getAllByEquipmentId(equipmentId);
+//    }
 
     @GetMapping("/{testId}/{equipmentId}")
     public TestEquipmentDTO getById(@PathVariable Integer testId, @PathVariable Integer equipmentId) {

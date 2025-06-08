@@ -1,5 +1,9 @@
 package com.db.project.api.dto.test;
 
+import com.db.project.api.dto.product.ProductShortDTO;
+import com.db.project.api.dto.testequipment.TestEquipmentShortDTO;
+import com.db.project.api.dto.tester.TesterShortDTO;
+import com.db.project.api.dto.testlab.TestLabShortDTO;
 import com.db.project.core.model.enums.TestResult;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
@@ -16,11 +20,11 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TestDTO {
     private Integer id;
-    private Integer productId;
-    private Integer labId;
+    private ProductShortDTO product;
+    private TestLabShortDTO lab;
     private TestResult result;
     private LocalDate startDate;
     private LocalDate endDate;
-    private List<Integer> testerIds;
-    private List<Integer> equipmentIds;
+    private List<TesterShortDTO> testers;
+    private List<TestEquipmentShortDTO> equipments;
 } 

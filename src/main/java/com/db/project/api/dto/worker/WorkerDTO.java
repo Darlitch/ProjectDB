@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class WorkerDTO {
-    private Integer id;
     private Integer employeeId;
     private Integer brigadeId;
     private Boolean isForeman;

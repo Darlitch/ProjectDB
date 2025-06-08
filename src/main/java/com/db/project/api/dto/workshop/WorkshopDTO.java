@@ -1,5 +1,8 @@
 package com.db.project.api.dto.workshop;
 
+import com.db.project.api.dto.employee.EmployeeShortDTO;
+import com.db.project.api.dto.product.ProductShortDTO;
+import com.db.project.api.dto.section.SectionShortDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,7 +18,7 @@ import java.util.List;
 public class WorkshopDTO {
     private Integer id;
     private String name;
-    private Integer directorId;
-    private List<Integer> sectionIds;
-    private List<Integer> productIds;
+    private EmployeeShortDTO director;
+    private List<SectionShortDTO> sections;
+    private List<ProductShortDTO> products;
 } 

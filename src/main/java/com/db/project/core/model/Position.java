@@ -22,7 +22,6 @@ public class Position {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "category", nullable = false)
     private EmployeeCategory category;
 

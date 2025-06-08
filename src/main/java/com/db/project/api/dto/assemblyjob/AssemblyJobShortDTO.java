@@ -1,5 +1,6 @@
 package com.db.project.api.dto.assemblyjob;
 
+import com.db.project.api.dto.section.SectionShortDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,5 +15,5 @@ import lombok.NoArgsConstructor;
 public class AssemblyJobShortDTO {
     private Integer id;
     private String name;
-    private Integer sectionId;
+    private SectionShortDTO section;
 } 

@@ -1,5 +1,7 @@
 package com.db.project.api.dto.testlab;
 
+import com.db.project.api.dto.equipment.EquipmentShortDTO;
+import com.db.project.api.dto.test.TestShortDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,6 +17,6 @@ import java.util.List;
 public class TestLabDTO {
     private Integer id;
     private String name;
-    private List<Integer> equipmentIds;
-    private List<Integer> testIds;
+    private List<EquipmentShortDTO> equipments;
+    private List<TestShortDTO> tests;
 } 

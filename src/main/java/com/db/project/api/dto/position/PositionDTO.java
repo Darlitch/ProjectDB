@@ -1,5 +1,6 @@
 package com.db.project.api.dto.position;
 
+import com.db.project.api.dto.employee.EmployeeShortDTO;
 import com.db.project.core.model.enums.EmployeeCategory;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
@@ -16,5 +17,5 @@ import java.util.List;
 public class PositionDTO {
     private Integer id;
     private EmployeeCategory category;
-    private List<Integer> employeeIds;
+    private List<EmployeeShortDTO> employees;
 } 

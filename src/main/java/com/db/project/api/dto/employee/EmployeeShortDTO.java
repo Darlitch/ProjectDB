@@ -1,5 +1,6 @@
 package com.db.project.api.dto.employee;
 
+import com.db.project.api.dto.position.PositionShortDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,6 +16,6 @@ import java.time.LocalDate;
 public class EmployeeShortDTO {
     private Integer id;
     private String name;
-    private Integer positionId;
+    private PositionShortDTO position;
     private LocalDate hireDate;
 } 

@@ -1,5 +1,7 @@
 package com.db.project.api.dto.product;
 
+import com.db.project.api.dto.producttype.ProductTypeShortDTO;
+import com.db.project.api.dto.workshop.WorkshopShortDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,6 +16,6 @@ import lombok.NoArgsConstructor;
 public class ProductShortDTO {
     private Integer id;
     private String serialNum;
-    private Integer typeId;
-    private Integer workshopId;
+    private ProductTypeShortDTO type;
+    private WorkshopShortDTO workshop;
 } 

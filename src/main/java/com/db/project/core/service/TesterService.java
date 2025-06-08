@@ -13,9 +13,9 @@ public interface TesterService {
 
     List<TesterDTO> getAll();
 
-    List<TesterDTO> getAllByLabId(Integer labId);
-
-    List<TesterDTO> getAllByEmployeeId(Integer employeeId);
+//    List<TesterDTO> getAllByLabId(Integer labId);
+//
+//    List<TesterDTO> getAllByEmployeeId(Integer employeeId);
 
     TesterDTO getById(Integer employeeId, Integer labId);
 

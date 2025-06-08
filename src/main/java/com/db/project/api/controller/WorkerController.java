@@ -29,15 +29,15 @@ public class WorkerController {
         return workerService.getAll();
     }
 
-    @GetMapping("/by-brigade/{brigadeId}")
-    public List<WorkerDTO> getAllByBrigadeId(@PathVariable Integer brigadeId) {
-        return workerService.getAllByBrigadeId(brigadeId);
-    }
-
-    @GetMapping("/by-employee/{employeeId}")
-    public List<WorkerDTO> getAllByEmployeeId(@PathVariable Integer employeeId) {
-        return workerService.getAllByEmployeeId(employeeId);
-    }
+//    @GetMapping("/by-brigade/{brigadeId}")
+//    public List<WorkerDTO> getAllByBrigadeId(@PathVariable Integer brigadeId) {
+//        return workerService.getAllByBrigadeId(brigadeId);
+//    }
+//
+//    @GetMapping("/by-employee/{employeeId}")
+//    public List<WorkerDTO> getAllByEmployeeId(@PathVariable Integer employeeId) {
+//        return workerService.getAllByEmployeeId(employeeId);
+//    }
 
     @GetMapping("/{employeeId}/{brigadeId}")
     public WorkerDTO getById(@PathVariable Integer employeeId, @PathVariable Integer brigadeId) {

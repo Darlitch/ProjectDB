@@ -9,6 +9,6 @@ import java.util.List;
 
 @Repository
 public interface TestEquipmentRepository extends JpaRepository<TestEquipment, TestEquipmentId> {
-    List<TestEquipment> findAllByTestId(Integer testId);
-    List<TestEquipment> findAllByEquipmentId(Integer equipmentId);
+//    List<TestEquipment> findAllByTestId(Integer testId);
+//    List<TestEquipment> findAllByEquipmentId(Integer equipmentId);
 } 

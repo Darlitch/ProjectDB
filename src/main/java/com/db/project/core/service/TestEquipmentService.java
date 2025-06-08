@@ -13,9 +13,9 @@ public interface TestEquipmentService {
     
     List<TestEquipmentDTO> getAll();
     
-    List<TestEquipmentDTO> getAllByTestId(Integer testId);
-    
-    List<TestEquipmentDTO> getAllByEquipmentId(Integer equipmentId);
+//    List<TestEquipmentDTO> getAllByTestId(Integer testId);
+//
+//    List<TestEquipmentDTO> getAllByEquipmentId(Integer equipmentId);
     
     TestEquipmentDTO getById(Integer testId, Integer equipmentId);
     

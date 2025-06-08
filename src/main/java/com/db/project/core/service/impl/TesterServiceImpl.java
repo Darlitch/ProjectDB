@@ -46,15 +46,15 @@ public class TesterServiceImpl implements TesterService {
         return testerMapper.toDto(testerRepository.findAll());
     }
 
-    @Override
-    public List<TesterDTO> getAllByLabId(Integer labId) {
-        return testerMapper.toDto(testerRepository.findAllByLabId(labId));
-    }
-
-    @Override
-    public List<TesterDTO> getAllByEmployeeId(Integer employeeId) {
-        return testerMapper.toDto(testerRepository.findAllByEmployeeId(employeeId));
-    }
+//    @Override
+//    public List<TesterDTO> getAllByLabId(Integer labId) {
+//        return testerMapper.toDto(testerRepository.findAllByLabId(labId));
+//    }
+//
+//    @Override
+//    public List<TesterDTO> getAllByEmployeeId(Integer employeeId) {
+//        return testerMapper.toDto(testerRepository.findAllByEmployeeId(employeeId));
+//    }
 
     @Override
     public TesterDTO getById(Integer testId, Integer employeeId) {

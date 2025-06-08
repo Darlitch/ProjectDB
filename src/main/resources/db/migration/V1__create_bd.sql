@@ -1,19 +1,19 @@
 -- Создание enum типов
-DO $$ 
-BEGIN
-    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'employee_category') THEN
-        CREATE TYPE employee_category AS ENUM ('WORKER', 'ENGINEER');
-    END IF;
-    
-    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'test_result') THEN
-        CREATE TYPE test_result AS ENUM ('SUCCESS', 'FAILED', 'IN_PROGRESS');
-    END IF;
-END $$;
+-- DO $$
+-- BEGIN
+--     IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'employee_category') THEN
+--         CREATE TYPE employee_category AS ENUM ('WORKER', 'ENGINEER');
+--     END IF;
+--
+--     IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'test_result') THEN
+--         CREATE TYPE test_result AS ENUM ('SUCCESS', 'FAILED', 'IN_PROGRESS');
+--     END IF;
+-- END $$;
 
 -- Создание таблицы должностей
 CREATE TABLE IF NOT EXISTS positions (
     id SERIAL PRIMARY KEY,
-    category employee_category NOT NULL
+    category int NOT NULL
 );
 
 -- Создание таблицы сотрудников
@@ -135,7 +135,7 @@ CREATE TABLE IF NOT EXISTS tests (
     id SERIAL PRIMARY KEY,
     product_id INTEGER REFERENCES products(id) ON DELETE CASCADE NOT NULL,
     lab_id INTEGER REFERENCES test_labs(id) ON DELETE RESTRICT NOT NULL,
-    result test_result NOT NULL,
+    result int NOT NULL,
     start_date DATE NOT NULL CHECK (start_date <= CURRENT_DATE),
     end_date DATE,
     CONSTRAINT valid_test_dates CHECK (end_date IS NULL OR end_date >= start_date)
@@ -236,7 +236,7 @@ BEGIN
                 FROM employees e
                 JOIN positions p ON p.id = e.position_id
                 WHERE e.id = NEW.director_id 
-                AND p.category = 'ENGINEER'
+                AND p.category = 1
             ) THEN
                 RAISE EXCEPTION 'Director must be an engineer';
             END IF;
@@ -254,7 +254,7 @@ BEGIN
                 FROM employees e
                 JOIN positions p ON p.id = e.position_id
                 WHERE e.id = NEW.head_id 
-                AND p.category = 'ENGINEER'
+                AND p.category = 1
             ) THEN
                 RAISE EXCEPTION 'Section head must be an engineer';
             END IF;
@@ -272,7 +272,7 @@ BEGIN
                 FROM employees e
                 JOIN positions p ON p.id = e.position_id
                 WHERE e.id = NEW.employee_id 
-                AND p.category = 'ENGINEER'
+                AND p.category = 1
             ) THEN
                 RAISE EXCEPTION 'Master must be an engineer';
             END IF;
@@ -290,7 +290,7 @@ BEGIN
                 FROM employees e
                 JOIN positions p ON p.id = e.position_id
                 WHERE e.id = NEW.employee_id 
-                AND p.category = 'WORKER'
+                AND p.category = 0
             ) THEN
                 RAISE EXCEPTION 'Worker must have worker position';
             END IF;
@@ -308,7 +308,7 @@ BEGIN
                 FROM employees e
                 JOIN positions p ON p.id = e.position_id
                 WHERE e.id = NEW.employee_id 
-                AND p.category = 'ENGINEER'
+                AND p.category = 1
             ) THEN
                 RAISE EXCEPTION 'Tester must be an engineer';
             END IF;

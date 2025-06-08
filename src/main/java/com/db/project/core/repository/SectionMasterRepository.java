@@ -9,6 +9,6 @@ import java.util.List;
 
 @Repository
 public interface SectionMasterRepository extends JpaRepository<SectionMaster, SectionMasterId> {
-    List<SectionMaster> findAllBySectionId(Integer sectionId);
-    List<SectionMaster> findAllByEmployeeId(Integer employeeId);
+//    List<SectionMaster> findAllBySectionId(Integer sectionId);
+//    List<SectionMaster> findAllByEmployeeId(Integer employeeId);
 } 

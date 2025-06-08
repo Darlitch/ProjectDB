@@ -1,5 +1,7 @@
 package com.db.project.api.dto.producttype;
 
+import com.db.project.api.dto.product.ProductShortDTO;
+import com.db.project.api.dto.productcategory.ProductCategoryShortDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,6 +17,6 @@ import java.util.List;
 public class ProductTypeDTO {
     private Integer id;
     private String name;
-    private Integer categoryId;
-    private List<Integer> productIds;
+    private ProductCategoryShortDTO category;
+    private List<ProductShortDTO> products;
 } 

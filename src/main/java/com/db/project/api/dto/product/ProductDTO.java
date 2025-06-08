@@ -1,5 +1,10 @@
 package com.db.project.api.dto.product;
 
+import com.db.project.api.dto.attributevalue.AttributeValueShortDTO;
+import com.db.project.api.dto.productionprocess.ProductionProcessShortDTO;
+import com.db.project.api.dto.producttype.ProductTypeShortDTO;
+import com.db.project.api.dto.test.TestShortDTO;
+import com.db.project.api.dto.workshop.WorkshopShortDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,9 +20,9 @@ import java.util.List;
 public class ProductDTO {
     private Integer id;
     private String serialNum;
-    private Integer typeId;
-    private Integer workshopId;
-    private List<Integer> attributeValueIds;
-    private List<Integer> productionProcessIds;
-    private List<Integer> testIds;
+    private ProductTypeShortDTO type;
+    private WorkshopShortDTO workshop;
+    private List<AttributeValueShortDTO> attributeValues;
+    private List<ProductionProcessShortDTO> productionProcesses;
+    private List<TestShortDTO> tests;
 } 

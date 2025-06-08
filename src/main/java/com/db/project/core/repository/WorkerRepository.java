@@ -9,6 +9,6 @@ import java.util.List;
 
 @Repository
 public interface WorkerRepository extends JpaRepository<Worker, WorkerId> {
-    List<Worker> findAllByBrigadeId(Integer brigadeId);
-    List<Worker> findAllByEmployeeId(Integer employeeId);
+//    List<Worker> findAllByBrigadeId(Integer brigadeId);
+//    List<Worker> findAllByEmployeeId(Integer employeeId);
 } 

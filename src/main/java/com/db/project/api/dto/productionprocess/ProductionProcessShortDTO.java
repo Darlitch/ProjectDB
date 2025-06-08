@@ -1,5 +1,8 @@
 package com.db.project.api.dto.productionprocess;
 
+import com.db.project.api.dto.assemblyjob.AssemblyJobShortDTO;
+import com.db.project.api.dto.brigade.BrigadeShortDTO;
+import com.db.project.api.dto.product.ProductShortDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,9 +17,9 @@ import java.time.LocalDate;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ProductionProcessShortDTO {
     private Integer id;
-    private Integer productId;
-    private Integer brigadeId;
-    private Integer jobId;
+    private ProductShortDTO product;
+    private BrigadeShortDTO brigade;
+    private AssemblyJobShortDTO job;
     private LocalDate startDate;
     private LocalDate endDate;
 } 

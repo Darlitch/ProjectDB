@@ -21,5 +21,6 @@ public class EmployeeCreateDTO {
     @NotNull(message = "Position ID is required")
     private Integer positionId;
 
-    private LocalDate hireDate;
+    @Builder.Default
+    private LocalDate hireDate = LocalDate.now();
 } 

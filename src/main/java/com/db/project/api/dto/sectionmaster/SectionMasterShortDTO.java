@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SectionMasterShortDTO {
-    private Integer id;
     private Integer employeeId;
     private Integer sectionId;
 } 

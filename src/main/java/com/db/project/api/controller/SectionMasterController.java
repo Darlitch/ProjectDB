@@ -29,15 +29,15 @@ public class SectionMasterController {
         return sectionMasterService.getAll();
     }
 
-    @GetMapping("/by-section/{sectionId}")
-    public List<SectionMasterDTO> getAllBySectionId(@PathVariable Integer sectionId) {
-        return sectionMasterService.getAllBySectionId(sectionId);
-    }
-
-    @GetMapping("/by-employee/{employeeId}")
-    public List<SectionMasterDTO> getAllByEmployeeId(@PathVariable Integer employeeId) {
-        return sectionMasterService.getAllByEmployeeId(employeeId);
-    }
+//    @GetMapping("/by-section/{sectionId}")
+//    public List<SectionMasterDTO> getAllBySectionId(@PathVariable Integer sectionId) {
+//        return sectionMasterService.getAllBySectionId(sectionId);
+//    }
+//
+//    @GetMapping("/by-employee/{employeeId}")
+//    public List<SectionMasterDTO> getAllByEmployeeId(@PathVariable Integer employeeId) {
+//        return sectionMasterService.getAllByEmployeeId(employeeId);
+//    }
 
     @GetMapping("/{employeeId}/{sectionId}")
     public SectionMasterDTO getById(@PathVariable Integer employeeId, @PathVariable Integer sectionId) {
