@@ -3,6 +3,7 @@ package com.db.project.core.service.impl;
 import com.db.project.core.exception.ErrorCode;
 import com.db.project.core.exception.ServiceException;
 import com.db.project.core.model.Employee;
+import com.db.project.core.model.enums.EmployeeCategory;
 import com.db.project.core.repository.EmployeeRepository;
 import com.db.project.core.service.EmployeeService;
 import com.db.project.core.service.PositionService;
@@ -67,5 +68,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Transactional
     public void delete(Integer id) {
         employeeRepository.delete(getEntityById(id));
+    }
+
+    @Override
+    public List<EmployeeDTO> getByWorkshopAndCategory(Integer workshopId, EmployeeCategory category) {
+        return employeeMapper.toDto(employeeRepository.findByWorkshopAndCategory(workshopId, category));
     }
 } 

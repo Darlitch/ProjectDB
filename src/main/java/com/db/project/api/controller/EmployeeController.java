@@ -4,6 +4,7 @@ import com.db.project.api.dto.employee.EmployeeCreateDTO;
 import com.db.project.api.dto.employee.EmployeeDTO;
 import com.db.project.api.dto.employee.EmployeeUpdateDTO;
 import com.db.project.core.service.EmployeeService;
+import com.db.project.core.model.enums.EmployeeCategory;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -43,5 +44,12 @@ public class EmployeeController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Integer id) {
         employeeService.delete(id);
+    }
+
+    @GetMapping("/filter")
+    public List<EmployeeDTO> getByWorkshopAndCategory(
+            @RequestParam(required = false) Integer workshopId,
+            @RequestParam(required = false) EmployeeCategory category) {
+        return employeeService.getByWorkshopAndCategory(workshopId, category);
     }
 } 

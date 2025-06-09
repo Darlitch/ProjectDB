@@ -2,6 +2,7 @@ package com.db.project.api.controller;
 
 import com.db.project.api.dto.producttype.ProductTypeCreateDTO;
 import com.db.project.api.dto.producttype.ProductTypeDTO;
+import com.db.project.api.dto.producttype.ProductTypeListDTO;
 import com.db.project.api.dto.producttype.ProductTypeUpdateDTO;
 import com.db.project.core.service.ProductTypeService;
 import jakarta.validation.Valid;
@@ -43,5 +44,25 @@ public class ProductTypeController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Integer id) {
         productTypeService.delete(id);
+    }
+
+    //Получить перечень видов изделий по категории
+    @GetMapping("/by-category/{categoryId}")
+    public List<ProductTypeListDTO> getTypesByCategory(@PathVariable Integer categoryId) {
+        return productTypeService.getTypesByCategory(categoryId);
+    }
+
+    // Получить перечень видов изделий, собираемых в указанном цехе
+    @GetMapping("/by-workshop/{workshopId}")
+    public List<ProductTypeListDTO> getTypesByWorkshop(@PathVariable Integer workshopId) {
+        return productTypeService.getTypesByWorkshop(workshopId);
+    }
+
+    //Получить перечень видов изделий по цеху и категории
+    @GetMapping("/by-workshop/{workshopId}/category/{categoryId}")
+    public List<ProductTypeListDTO> getTypesByWorkshopAndCategory(
+            @PathVariable Integer workshopId,
+            @PathVariable Integer categoryId) {
+        return productTypeService.getTypesByWorkshopAndCategory(workshopId, categoryId);
     }
 } 

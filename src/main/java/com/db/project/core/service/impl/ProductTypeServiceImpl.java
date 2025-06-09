@@ -8,8 +8,10 @@ import com.db.project.core.service.ProductTypeService;
 import com.db.project.core.service.ProductCategoryService;
 import com.db.project.api.dto.producttype.ProductTypeCreateDTO;
 import com.db.project.api.dto.producttype.ProductTypeDTO;
+import com.db.project.api.dto.producttype.ProductTypeListDTO;
 import com.db.project.api.dto.producttype.ProductTypeUpdateDTO;
 import com.db.project.api.mapper.producttype.ProductTypeMapper;
+import com.db.project.api.mapper.producttype.ProductTypeListMapper;
 import com.db.project.api.mapper.producttype.ProductTypeUpdateMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,7 @@ public class ProductTypeServiceImpl implements ProductTypeService {
 
     private final ProductTypeRepository productTypeRepository;
     private final ProductTypeMapper productTypeMapper;
+    private final ProductTypeListMapper productTypeListMapper;
     private final ProductTypeUpdateMapper productTypeUpdateMapper;
     private final ProductCategoryService productCategoryService;
 
@@ -66,5 +69,20 @@ public class ProductTypeServiceImpl implements ProductTypeService {
     @Transactional
     public void delete(Integer id) {
         productTypeRepository.delete(getEntityById(id));
+    }
+
+    @Override
+    public List<ProductTypeListDTO> getTypesByCategory(Integer categoryId) {
+        return productTypeListMapper.toDto(productTypeRepository.findByCategory(categoryId));
+    }
+
+    @Override
+    public List<ProductTypeListDTO> getTypesByWorkshop(Integer workshopId) {
+        return productTypeListMapper.toDto(productTypeRepository.findByWorkshop(workshopId));
+    }
+
+    @Override
+    public List<ProductTypeListDTO> getTypesByWorkshopAndCategory(Integer workshopId, Integer categoryId) {
+        return productTypeListMapper.toDto(productTypeRepository.findByWorkshopAndCategory(workshopId, categoryId));
     }
 } 
