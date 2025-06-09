@@ -44,4 +44,11 @@ public class BrigadeController {
     public void delete(@PathVariable Integer id) {
         brigadeService.delete(id);
     }
+
+    @GetMapping("/filter")
+    public List<BrigadeDTO> getByWorkshopOrSection(
+            @RequestParam(required = false) Integer workshopId,
+            @RequestParam(required = false) Integer sectionId) {
+        return brigadeService.getByWorkshopOrSection(workshopId, sectionId);
+    }
 } 

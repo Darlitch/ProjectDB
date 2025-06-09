@@ -67,4 +67,9 @@ public class BrigadeServiceImpl implements BrigadeService {
     public void delete(Integer id) {
         brigadeRepository.delete(getEntityById(id));
     }
+
+    @Override
+    public List<BrigadeDTO> getByWorkshopOrSection(Integer workshopId, Integer sectionId) {
+        return brigadeMapper.toDto(brigadeRepository.findByWorkshopOrSectionWithWorkers(workshopId, sectionId));
+    }
 } 

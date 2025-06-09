@@ -22,4 +22,6 @@ public interface BrigadeService {
     BrigadeDTO update(Integer id, BrigadeUpdateDTO brigadeDTO);
 
     void delete(Integer id);
+
+    List<BrigadeDTO> getByWorkshopOrSection(Integer workshopId, Integer sectionId);
 } 
