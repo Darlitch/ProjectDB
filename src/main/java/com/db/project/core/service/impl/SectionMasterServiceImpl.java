@@ -84,4 +84,9 @@ public class SectionMasterServiceImpl implements SectionMasterService {
     public void delete(Integer sectionId, Integer employeeId) {
         sectionMasterRepository.delete(getEntityById(sectionId, employeeId));
     }
+
+    @Override
+    public List<SectionMasterDTO> getByWorkshopOrSection(Integer workshopId, Integer sectionId) {
+        return sectionMasterMapper.toDto(sectionMasterRepository.findByWorkshopOrSection(workshopId, sectionId));
+    }
 } 

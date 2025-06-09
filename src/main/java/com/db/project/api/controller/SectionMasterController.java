@@ -57,4 +57,11 @@ public class SectionMasterController {
     public void delete(@PathVariable Integer employeeId, @PathVariable Integer sectionId) {
         sectionMasterService.delete(sectionId, employeeId);
     }
+
+    @GetMapping("/filter")
+    public List<SectionMasterDTO> getByWorkshopOrSection(
+            @RequestParam(required = false) Integer workshopId,
+            @RequestParam(required = false) Integer sectionId) {
+        return sectionMasterService.getByWorkshopOrSection(workshopId, sectionId);
+    }
 } 

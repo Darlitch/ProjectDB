@@ -25,4 +25,6 @@ public interface SectionMasterService {
 
     // Internal methods for service layer
     SectionMaster getEntityById(Integer sectionId, Integer employeeId);
+
+    List<SectionMasterDTO> getByWorkshopOrSection(Integer workshopId, Integer sectionId);
 } 
