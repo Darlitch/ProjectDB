@@ -72,4 +72,9 @@ public class BrigadeServiceImpl implements BrigadeService {
     public List<BrigadeDTO> getByWorkshopOrSection(Integer workshopId, Integer sectionId) {
         return brigadeMapper.toDto(brigadeRepository.findByWorkshopOrSectionWithWorkers(workshopId, sectionId));
     }
+
+    @Override
+    public List<BrigadeDTO> getByProduct(Integer productId) {
+        return brigadeMapper.toDto(brigadeRepository.findByProductIdWithWorkers(productId));
+    }
 } 

@@ -23,4 +23,15 @@ public interface BrigadeRepository extends JpaRepository<Brigade, Integer> {
     List<Brigade> findByWorkshopOrSectionWithWorkers(
             @Param("workshopId") Integer workshopId,
             @Param("sectionId") Integer sectionId);
+
+    @Query("""
+            SELECT DISTINCT b FROM Brigade b
+            LEFT JOIN FETCH b.workers w
+            LEFT JOIN FETCH w.employee e
+            LEFT JOIN FETCH b.section s
+            LEFT JOIN b.productionProcesses pp
+            WHERE pp.product.id = :productId
+            ORDER BY b.name, e.name
+            """)
+    List<Brigade> findByProductIdWithWorkers(@Param("productId") Integer productId);
 } 

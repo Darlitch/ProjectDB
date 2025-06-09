@@ -51,4 +51,9 @@ public class BrigadeController {
             @RequestParam(required = false) Integer sectionId) {
         return brigadeService.getByWorkshopOrSection(workshopId, sectionId);
     }
+
+    @GetMapping("/by-product/{productId}")
+    public List<BrigadeDTO> getByProduct(@PathVariable Integer productId) {
+        return brigadeService.getByProduct(productId);
+    }
 } 

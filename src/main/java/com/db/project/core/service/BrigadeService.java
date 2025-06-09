@@ -24,4 +24,6 @@ public interface BrigadeService {
     void delete(Integer id);
 
     List<BrigadeDTO> getByWorkshopOrSection(Integer workshopId, Integer sectionId);
+
+    List<BrigadeDTO> getByProduct(Integer productId);
 } 
