@@ -3,6 +3,9 @@ package com.db.project.api.controller;
 import com.db.project.api.dto.section.SectionCreateDTO;
 import com.db.project.api.dto.section.SectionDTO;
 import com.db.project.api.dto.section.SectionUpdateDTO;
+import com.db.project.api.dto.section.SectionWithHeadDTO;
+import com.db.project.api.mapper.section.SectionWithHeadMapper;
+import com.db.project.core.repository.SectionRepository;
 import com.db.project.core.service.SectionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +20,8 @@ import java.util.List;
 public class SectionController {
 
     private final SectionService sectionService;
+    private final SectionRepository sectionRepository;
+    private final SectionWithHeadMapper sectionWithHeadMapper;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -43,5 +48,10 @@ public class SectionController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Integer id) {
         sectionService.delete(id);
+    }
+
+    @GetMapping("/filter")
+    public List<SectionWithHeadDTO> getByWorkshopWithHead(@RequestParam(required = false) Integer workshopId) {
+        return sectionWithHeadMapper.toDto(sectionRepository.findByWorkshopWithHead(workshopId));
     }
 } 
