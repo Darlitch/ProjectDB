@@ -44,4 +44,9 @@ public class ProductionProcessController {
     public void delete(@PathVariable Integer id) {
         productionProcessService.delete(id);
     }
+
+    @GetMapping("/by-product/{productId}")
+    public List<ProductionProcessDTO> getByProduct(@PathVariable Integer productId) {
+        return productionProcessService.getByProduct(productId);
+    }
 } 

@@ -20,4 +20,6 @@ public interface ProductionProcessService {
     ProductionProcessDTO update(Integer id, ProductionProcessUpdateDTO productionProcessDTO);
 
     void delete(Integer id);
+
+    List<ProductionProcessDTO> getByProduct(Integer productId);
 } 

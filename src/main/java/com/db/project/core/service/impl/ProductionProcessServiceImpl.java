@@ -74,4 +74,9 @@ public class ProductionProcessServiceImpl implements ProductionProcessService {
     public void delete(Integer id) {
         productionProcessRepository.delete(getEntityById(id));
     }
+
+    @Override
+    public List<ProductionProcessDTO> getByProduct(Integer productId) {
+        return productionProcessMapper.toDto(productionProcessRepository.findByProductIdWithDetails(productId));
+    }
 } 
