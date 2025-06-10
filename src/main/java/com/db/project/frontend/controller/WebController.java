@@ -82,6 +82,11 @@ public class WebController {
         return "types";
     }
 
+    @GetMapping("/attributes")
+    public String attributes() {
+        return "attributes";
+    }
+
     @PostMapping("/logout")
     public String logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         if (authentication != null) {
