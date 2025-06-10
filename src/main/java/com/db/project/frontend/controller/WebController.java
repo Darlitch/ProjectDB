@@ -77,6 +77,11 @@ public class WebController {
         return "categories";
     }
 
+    @GetMapping("/types")
+    public String types() {
+        return "types";
+    }
+
     @PostMapping("/logout")
     public String logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         if (authentication != null) {
