@@ -23,7 +23,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-@SuppressWarnings("java:S4502") // CSRF disabled
+@SuppressWarnings("java:S4502") // CSRF disabled for API
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -64,6 +64,8 @@ public class SecurityConfig {
                 .securityMatcher("/**")
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
+                                "/static/**",
+                                "/vendor/**",
                                 "/webjars/**",
                                 "/css/**",
                                 "/js/**",
@@ -75,6 +77,7 @@ public class SecurityConfig {
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
+                        .loginProcessingUrl("/login")
                         .defaultSuccessUrl("/", true)
                         .permitAll()
                 )

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <footer th:fragment="footer" class="sticky-footer bg-white">
+        <div class="container my-auto">
+            <div class="copyright text-center my-auto">
+                <span>Copyright &copy; Project DB 2024</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap core JavaScript-->
+    <script th:src="@{/static/vendor/jquery/jquery.min.js}"></script>
+    <script th:src="@{/static/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script th:src="@{/static/vendor/jquery-easing/jquery.easing.min.js}"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script th:src="@{/static/js/sb-admin-2.min.js}"></script>
+
+    <!-- HTMX -->
+    <script th:src="@{/webjars/htmx.org/dist/htmx.min.js}"></script>
+
+    <!-- API Client -->
+    <script th:src="@{/static/js/api.js}"></script>
+</body>
+
+</html> 

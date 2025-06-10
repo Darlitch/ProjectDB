@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+    <!-- Sidebar -->
+    <ul th:fragment="sidebar" class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+
+        <!-- Sidebar - Brand -->
+        <a class="sidebar-brand d-flex align-items-center justify-content-center" th:href="@{/}">
+            <div class="sidebar-brand-icon">
+                <i class="fas fa-database"></i>
+            </div>
+            <div class="sidebar-brand-text mx-3">Project DB</div>
+        </a>
+
+        <!-- Divider -->
+        <hr class="sidebar-divider my-0">
+
+        <!-- Nav Item - Dashboard -->
+        <li class="nav-item active">
+            <a class="nav-link" th:href="@{/}">
+                <i class="fas fa-fw fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </a>
+        </li>
+
+        <!-- Divider -->
+        <hr class="sidebar-divider">
+
+        <!-- Heading -->
+        <div class="sidebar-heading">
+            Products
+        </div>
+
+        <!-- Nav Item - Products -->
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/products}">
+                <i class="fas fa-fw fa-box"></i>
+                <span>Products</span>
+            </a>
+        </li>
+
+        <!-- Nav Item - Categories -->
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/categories}">
+                <i class="fas fa-fw fa-folder"></i>
+                <span>Categories</span>
+            </a>
+        </li>
+
+        <!-- Nav Item - Types -->
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/types}">
+                <i class="fas fa-fw fa-tags"></i>
+                <span>Types</span>
+            </a>
+        </li>
+
+        <!-- Divider -->
+        <hr class="sidebar-divider">
+
+        <!-- Heading -->
+        <div class="sidebar-heading">
+            Production
+        </div>
+
+        <!-- Nav Item - Workshops -->
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/workshops}">
+                <i class="fas fa-fw fa-industry"></i>
+                <span>Workshops</span>
+            </a>
+        </li>
+
+        <!-- Nav Item - Sections -->
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/sections}">
+                <i class="fas fa-fw fa-layer-group"></i>
+                <span>Sections</span>
+            </a>
+        </li>
+
+        <!-- Divider -->
+        <hr class="sidebar-divider">
+
+        <!-- Heading -->
+        <div class="sidebar-heading">
+            Personnel
+        </div>
+
+        <!-- Nav Item - Employees -->
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/employees}">
+                <i class="fas fa-fw fa-users"></i>
+                <span>Employees</span>
+            </a>
+        </li>
+
+        <!-- Nav Item - Positions -->
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/positions}">
+                <i class="fas fa-fw fa-id-badge"></i>
+                <span>Positions</span>
+            </a>
+        </li>
+
+        <!-- Divider -->
+        <hr class="sidebar-divider">
+
+        <!-- Heading -->
+        <div class="sidebar-heading">
+            Testing
+        </div>
+
+        <!-- Nav Item - Tests -->
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/tests}">
+                <i class="fas fa-fw fa-flask"></i>
+                <span>Tests</span>
+            </a>
+        </li>
+
+        <!-- Nav Item - Labs -->
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/labs}">
+                <i class="fas fa-fw fa-vial"></i>
+                <span>Labs</span>
+            </a>
+        </li>
+
+        <!-- Divider -->
+        <hr class="sidebar-divider">
+
+        <!-- Heading -->
+        <div class="sidebar-heading">
+            Admin
+        </div>
+
+        <!-- Nav Item - Users -->
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/users}">
+                <i class="fas fa-fw fa-user"></i>
+                <span>Users</span>
+            </a>
+        </li>
+
+        <!-- Nav Item - Settings -->
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/settings}">
+                <i class="fas fa-fw fa-cog"></i>
+                <span>Settings</span>
+            </a>
+        </li>
+
+        <!-- Divider -->
+        <hr class="sidebar-divider d-none d-md-block">
+
+        <!-- Sidebar Toggler (Sidebar) -->
+        <div class="text-center d-none d-md-inline">
+            <button class="rounded-circle border-0" id="sidebarToggle"></button>
+        </div>
+
+    </ul>
+    <!-- End of Sidebar -->
+</body>
+</html> 
