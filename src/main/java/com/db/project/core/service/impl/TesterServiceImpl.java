@@ -8,15 +8,18 @@ import com.db.project.core.repository.TesterRepository;
 import com.db.project.core.service.TesterService;
 import com.db.project.core.service.TestService;
 import com.db.project.core.service.EmployeeService;
+import com.db.project.api.dto.employee.EmployeeShortDTO;
 import com.db.project.api.dto.tester.TesterCreateDTO;
 import com.db.project.api.dto.tester.TesterDTO;
 import com.db.project.api.dto.tester.TesterUpdateDTO;
 import com.db.project.api.mapper.tester.TesterMapper;
 import com.db.project.api.mapper.tester.TesterUpdateMapper;
+import com.db.project.api.mapper.tester.TesterStatisticsMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -27,6 +30,7 @@ public class TesterServiceImpl implements TesterService {
     private final TesterRepository testerRepository;
     private final TesterMapper testerMapper;
     private final TesterUpdateMapper testerUpdateMapper;
+    private final TesterStatisticsMapper testerStatisticsMapper;
     private final TestService testService;
     private final EmployeeService employeeService;
 
@@ -83,5 +87,12 @@ public class TesterServiceImpl implements TesterService {
     @Transactional
     public void delete(Integer testId, Integer employeeId) {
         testerRepository.delete(getEntityById(testId, employeeId));
+    }
+
+    @Override
+    public List<EmployeeShortDTO> getTestersByParameters(Integer labId, Integer productId, Integer categoryId, LocalDate startDate, LocalDate endDate) {
+        return testerStatisticsMapper.toEmployeeShortDto(
+            testerRepository.findTestersByParameters(labId, productId, categoryId, startDate, endDate)
+        );
     }
 } 

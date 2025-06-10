@@ -1,10 +1,12 @@
 package com.db.project.core.service;
 
 import com.db.project.core.model.Tester;
+import com.db.project.api.dto.employee.EmployeeShortDTO;
 import com.db.project.api.dto.tester.TesterCreateDTO;
 import com.db.project.api.dto.tester.TesterDTO;
 import com.db.project.api.dto.tester.TesterUpdateDTO;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface TesterService {
@@ -25,4 +27,6 @@ public interface TesterService {
 
     // Internal methods for service layer
     Tester getEntityById(Integer testId, Integer employeeId);
+
+    List<EmployeeShortDTO> getTestersByParameters(Integer labId, Integer productId, Integer categoryId, LocalDate startDate, LocalDate endDate);
 } 
