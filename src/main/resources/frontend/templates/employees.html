@@ -14,7 +14,7 @@
         <!-- Page Heading -->
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
             <h1 class="h3 mb-0 text-gray-800">Employees Management</h1>
-            <button class="btn btn-primary" data-toggle="modal" data-target="#createEmployeeModal">
+            <button class="btn btn-primary" id="createEmployeeBtn">
                 <i class="fas fa-plus fa-sm"></i> Add Employee
             </button>
         </div>
@@ -114,55 +114,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- View Employee Details Modal -->
-        <div class="modal fade" id="viewEmployeeModal" tabindex="-1" role="dialog">
-            <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Employee Details</h5>
-                        <button type="button" class="close" data-dismiss="modal">
-                            <span>&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <h6 class="font-weight-bold">Basic Information</h6>
-                                <p><strong>Name:</strong> <span id="viewName"></span></p>
-                                <p><strong>Position:</strong> <span id="viewPosition"></span></p>
-                                <p><strong>Category:</strong> <span id="viewCategory"></span></p>
-                                <p><strong>Hire Date:</strong> <span id="viewHireDate"></span></p>
-                            </div>
-                            <div class="col-md-6">
-                                <h6 class="font-weight-bold">Roles</h6>
-                                <div id="viewRoles">
-                                    <div id="directedWorkshops">
-                                        <strong>Director of Workshops:</strong>
-                                        <ul></ul>
-                                    </div>
-                                    <div id="headedSections">
-                                        <strong>Head of Sections:</strong>
-                                        <ul></ul>
-                                    </div>
-                                    <div id="masterSections">
-                                        <strong>Master of Sections:</strong>
-                                        <ul></ul>
-                                    </div>
-                                    <div id="workerBrigades">
-                                        <strong>Member of Brigades:</strong>
-                                        <ul></ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 
     <th:block layout:fragment="scripts">
@@ -206,9 +157,6 @@
                         { data: null,
                           render: function(data, type, row) {
                               return `
-                                  <button class="btn btn-info btn-sm view-employee" data-id="${row.id}">
-                                      <i class="fas fa-eye"></i>
-                                  </button>
                                   <button class="btn btn-primary btn-sm edit-employee" data-id="${row.id}">
                                       <i class="fas fa-edit"></i>
                                   </button>
@@ -264,37 +212,18 @@
                 loadWorkshops();
 
                 // Handle create/edit modal
-                $('#employeeModal').on('show.bs.modal', function(e) {
-                    var button = $(e.relatedTarget);
-                    var id = button.data('id');
-                    var modal = $(this);
-                    
-                    if (id) {
-                        modal.find('.modal-title').text('Edit Employee');
-                        // Load employee data
-                        $.ajax({
-                            url: '/api/v1/employees/' + id,
-                            type: 'GET',
-                            headers: {
-                                'Authorization': 'Bearer ' + sessionStorage.getItem('jwtToken')
-                            },
-                            success: function(employee) {
-                                $('#employeeId').val(employee.id);
-                                $('#employeeName').val(employee.name);
-                                $('#positionId').val(employee.position.id);
-                                $('#hireDate').val(employee.hireDate);
-                            }
-                        });
-                    } else {
-                        modal.find('.modal-title').text('Add Employee');
-                        $('#employeeForm')[0].reset();
-                        $('#employeeId').val('');
-                    }
+                $('#createEmployeeBtn').click(function() {
+                    $('#employeeForm')[0].reset();
+                    $('#employeeId').val('');
+                    $('#employeeModal').modal('show');
                 });
 
-                // Handle view modal
-                $(document).on('click', '.view-employee', function() {
+                // Handle edit button
+                $(document).on('click', '.edit-employee', function() {
                     var id = $(this).data('id');
+                    $('#employeeModal').find('.modal-title').text('Edit Employee');
+                    
+                    // Load employee data
                     $.ajax({
                         url: '/api/v1/employees/' + id,
                         type: 'GET',
@@ -302,40 +231,14 @@
                             'Authorization': 'Bearer ' + sessionStorage.getItem('jwtToken')
                         },
                         success: function(employee) {
-                            $('#viewName').text(employee.name);
-                            $('#viewPosition').text(employee.position.category);
-                            $('#viewCategory').text(employee.position.category);
-                            $('#viewHireDate').text(employee.hireDate);
-
-                            // Clear previous lists
-                            $('#directedWorkshops ul').empty();
-                            $('#headedSections ul').empty();
-                            $('#masterSections ul').empty();
-                            $('#workerBrigades ul').empty();
-
-                            // Fill workshops
-                            employee.directedWorkshops.forEach(function(workshop) {
-                                $('#directedWorkshops ul').append(`<li>${workshop.name}</li>`);
-                            });
-
-                            // Fill sections
-                            employee.headedSections.forEach(function(section) {
-                                $('#headedSections ul').append(`<li>${section.name} (${section.workshop.name})</li>`);
-                            });
-
-                            // Fill master sections
-                            employee.masterSections.forEach(function(master) {
-                                $('#masterSections ul').append(`<li>${master.section.name}</li>`);
-                            });
-
-                            // Fill brigades
-                            employee.workerBrigades.forEach(function(worker) {
-                                $('#workerBrigades ul').append(
-                                    `<li>${worker.brigade.name} ${worker.isForeman ? '(Foreman)' : ''}</li>`
-                                );
-                            });
-
-                            $('#viewEmployeeModal').modal('show');
+                            $('#employeeId').val(employee.id);
+                            $('#employeeName').val(employee.name);
+                            $('#positionId').val(employee.position.id);
+                            $('#hireDate').val(employee.hireDate);
+                            $('#employeeModal').modal('show');
+                        },
+                        error: function(xhr) {
+                            alert('Error loading employee data: ' + (xhr.responseJSON?.message || xhr.statusText));
                         }
                     });
                 });
