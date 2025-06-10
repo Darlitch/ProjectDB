@@ -7,6 +7,7 @@ import com.db.project.core.service.TestEquipmentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class TestEquipmentController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('EDITOR')")
     public TestEquipmentDTO create(@Valid @RequestBody TestEquipmentCreateDTO equipmentDTO) {
         return testEquipmentService.create(equipmentDTO);
     }
@@ -45,6 +47,7 @@ public class TestEquipmentController {
     }
 
     @PatchMapping("/{testId}/{equipmentId}")
+    @PreAuthorize("hasRole('EDITOR')")
     public TestEquipmentDTO update(
             @PathVariable Integer testId,
             @PathVariable Integer equipmentId,
@@ -54,6 +57,7 @@ public class TestEquipmentController {
 
     @DeleteMapping("/{testId}/{equipmentId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('EDITOR')")
     public void delete(@PathVariable Integer testId, @PathVariable Integer equipmentId) {
         testEquipmentService.delete(testId, equipmentId);
     }

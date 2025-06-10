@@ -7,6 +7,7 @@ import com.db.project.core.service.SectionMasterService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class SectionMasterController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('EDITOR')")
     public SectionMasterDTO create(@Valid @RequestBody SectionMasterCreateDTO masterDTO) {
         return sectionMasterService.create(masterDTO);
     }
@@ -45,6 +47,7 @@ public class SectionMasterController {
     }
 
     @PatchMapping("/{employeeId}/{sectionId}")
+    @PreAuthorize("hasRole('EDITOR')")
     public SectionMasterDTO update(
             @PathVariable Integer employeeId,
             @PathVariable Integer sectionId,
@@ -54,6 +57,7 @@ public class SectionMasterController {
 
     @DeleteMapping("/{employeeId}/{sectionId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('EDITOR')")
     public void delete(@PathVariable Integer employeeId, @PathVariable Integer sectionId) {
         sectionMasterService.delete(sectionId, employeeId);
     }

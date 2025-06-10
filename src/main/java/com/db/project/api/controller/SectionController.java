@@ -10,6 +10,7 @@ import com.db.project.core.service.SectionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,6 +26,7 @@ public class SectionController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('EDITOR')")
     public SectionDTO create(@Valid @RequestBody SectionCreateDTO sectionDTO) {
         return sectionService.create(sectionDTO);
     }
@@ -40,12 +42,14 @@ public class SectionController {
     }
 
     @PatchMapping("/{id}")
+    @PreAuthorize("hasRole('EDITOR')")
     public SectionDTO update(@PathVariable Integer id, @Valid @RequestBody SectionUpdateDTO sectionDTO) {
         return sectionService.update(id, sectionDTO);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('EDITOR')")
     public void delete(@PathVariable Integer id) {
         sectionService.delete(id);
     }

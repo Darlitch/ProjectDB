@@ -7,6 +7,7 @@ import com.db.project.core.service.WorkerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class WorkerController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('EDITOR')")
     public WorkerDTO create(@Valid @RequestBody WorkerCreateDTO workerDTO) {
         return workerService.create(workerDTO);
     }
@@ -45,6 +47,7 @@ public class WorkerController {
     }
 
     @PatchMapping("/{brigadeId}/{employeeId}")
+    @PreAuthorize("hasRole('EDITOR')")
     public WorkerDTO update(
             @PathVariable Integer brigadeId,
             @PathVariable Integer employeeId,
@@ -54,6 +57,7 @@ public class WorkerController {
 
     @DeleteMapping("/{brigadeId}/{employeeId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('EDITOR')")
     public void delete(@PathVariable Integer brigadeId, @PathVariable Integer employeeId) {
         workerService.delete(brigadeId, employeeId);
     }

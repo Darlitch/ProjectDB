@@ -7,6 +7,7 @@ import com.db.project.core.service.ProductCategoryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class ProductCategoryController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('EDITOR')")
     public ProductCategoryDTO create(@Valid @RequestBody ProductCategoryCreateDTO categoryDTO) {
         return productCategoryService.create(categoryDTO);
     }
@@ -35,12 +37,14 @@ public class ProductCategoryController {
     }
 
     @PatchMapping("/{id}")
+    @PreAuthorize("hasRole('EDITOR')")
     public ProductCategoryDTO update(@PathVariable Integer id, @Valid @RequestBody ProductCategoryUpdateDTO categoryDTO) {
         return productCategoryService.update(id, categoryDTO);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('EDITOR')")
     public void delete(@PathVariable Integer id) {
         productCategoryService.delete(id);
     }

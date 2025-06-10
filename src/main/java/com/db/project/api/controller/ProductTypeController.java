@@ -8,6 +8,7 @@ import com.db.project.core.service.ProductTypeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +22,7 @@ public class ProductTypeController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('EDITOR')")
     public ProductTypeDTO create(@Valid @RequestBody ProductTypeCreateDTO productTypeDTO) {
         return productTypeService.create(productTypeDTO);
     }
@@ -36,11 +38,13 @@ public class ProductTypeController {
     }
 
     @PatchMapping("/{id}")
+    @PreAuthorize("hasRole('EDITOR')")
     public ProductTypeDTO update(@PathVariable Integer id, @Valid @RequestBody ProductTypeUpdateDTO productTypeDTO) {
         return productTypeService.update(id, productTypeDTO);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('EDITOR')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Integer id) {
         productTypeService.delete(id);

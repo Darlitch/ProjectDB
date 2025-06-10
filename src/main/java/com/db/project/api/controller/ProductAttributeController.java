@@ -7,6 +7,7 @@ import com.db.project.core.service.ProductAttributeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class ProductAttributeController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('EDITOR')")
     public ProductAttributeDTO create(@Valid @RequestBody ProductAttributeCreateDTO attributeDTO) {
         return productAttributeService.create(attributeDTO);
     }
@@ -35,12 +37,14 @@ public class ProductAttributeController {
     }
 
     @PatchMapping("/{id}")
+    @PreAuthorize("hasRole('EDITOR')")
     public ProductAttributeDTO update(@PathVariable Integer id, @Valid @RequestBody ProductAttributeUpdateDTO attributeDTO) {
         return productAttributeService.update(id, attributeDTO);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('EDITOR')")
     public void delete(@PathVariable Integer id) {
         productAttributeService.delete(id);
     }

@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -23,6 +24,7 @@ public class EquipmentController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('EDITOR')")
     public EquipmentDTO create(@Valid @RequestBody EquipmentCreateDTO equipmentDTO) {
         return equipmentService.create(equipmentDTO);
     }
@@ -38,12 +40,14 @@ public class EquipmentController {
     }
 
     @PatchMapping("/{id}")
+    @PreAuthorize("hasRole('EDITOR')")
     public EquipmentDTO update(@PathVariable Integer id, @Valid @RequestBody EquipmentUpdateDTO equipmentDTO) {
         return equipmentService.update(id, equipmentDTO);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('EDITOR')")
     public void delete(@PathVariable Integer id) {
         equipmentService.delete(id);
     }

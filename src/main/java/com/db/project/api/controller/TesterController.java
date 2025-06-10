@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -23,6 +24,7 @@ public class TesterController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('EDITOR')")
     public TesterDTO create(@Valid @RequestBody TesterCreateDTO testerDTO) {
         return testerService.create(testerDTO);
     }
@@ -48,6 +50,7 @@ public class TesterController {
     }
 
     @PatchMapping("/{employeeId}/{labId}")
+    @PreAuthorize("hasRole('EDITOR')")
     public TesterDTO update(
             @PathVariable Integer employeeId,
             @PathVariable Integer labId,
@@ -57,6 +60,7 @@ public class TesterController {
 
     @DeleteMapping("/{employeeId}/{labId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('EDITOR')")
     public void delete(@PathVariable Integer employeeId, @PathVariable Integer labId) {
         testerService.delete(employeeId, labId);
     }

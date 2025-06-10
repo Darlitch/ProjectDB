@@ -7,6 +7,7 @@ import com.db.project.core.service.WorkshopService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class WorkshopController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('EDITOR')")
     public WorkshopDTO create(@Valid @RequestBody WorkshopCreateDTO workshopDTO) {
         return workshopService.create(workshopDTO);
     }
@@ -35,12 +37,14 @@ public class WorkshopController {
     }
 
     @PatchMapping("/{id}")
+    @PreAuthorize("hasRole('EDITOR')")
     public WorkshopDTO update(@PathVariable Integer id, @Valid @RequestBody WorkshopUpdateDTO workshopDTO) {
         return workshopService.update(id, workshopDTO);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('EDITOR')")
     public void delete(@PathVariable Integer id) {
         workshopService.delete(id);
     }

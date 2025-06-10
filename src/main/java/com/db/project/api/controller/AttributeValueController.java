@@ -7,6 +7,7 @@ import com.db.project.core.service.AttributeValueService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class AttributeValueController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('EDITOR')")
     public AttributeValueDTO create(@Valid @RequestBody AttributeValueCreateDTO valueDTO) {
         return attributeValueService.create(valueDTO);
     }
@@ -35,12 +37,14 @@ public class AttributeValueController {
     }
 
     @PatchMapping("/{id}")
+    @PreAuthorize("hasRole('EDITOR')")
     public AttributeValueDTO update(@PathVariable Integer id, @Valid @RequestBody AttributeValueUpdateDTO valueDTO) {
         return attributeValueService.update(id, valueDTO);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('EDITOR')")
     public void delete(@PathVariable Integer id) {
         attributeValueService.delete(id);
     }

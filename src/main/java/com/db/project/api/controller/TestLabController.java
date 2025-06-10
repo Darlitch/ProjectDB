@@ -8,6 +8,7 @@ import com.db.project.core.service.TestLabService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +22,7 @@ public class TestLabController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('EDITOR')")
     public TestLabDTO create(@Valid @RequestBody TestLabCreateDTO labDTO) {
         return testLabService.create(labDTO);
     }
@@ -41,12 +43,14 @@ public class TestLabController {
     }
 
     @PatchMapping("/{id}")
+    @PreAuthorize("hasRole('EDITOR')")
     public TestLabDTO update(@PathVariable Integer id, @Valid @RequestBody TestLabUpdateDTO labDTO) {
         return testLabService.update(id, labDTO);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('EDITOR')")
     public void delete(@PathVariable Integer id) {
         testLabService.delete(id);
     }

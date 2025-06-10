@@ -8,6 +8,7 @@ import com.db.project.core.model.enums.EmployeeCategory;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +22,7 @@ public class EmployeeController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('EDITOR')")
     public EmployeeDTO create(@Valid @RequestBody EmployeeCreateDTO employeeDTO) {
         return employeeService.create(employeeDTO);
     }
@@ -36,12 +38,14 @@ public class EmployeeController {
     }
 
     @PatchMapping("/{id}")
+    @PreAuthorize("hasRole('EDITOR')")
     public EmployeeDTO update(@PathVariable Integer id, @Valid @RequestBody EmployeeUpdateDTO employeeDTO) {
         return employeeService.update(id, employeeDTO);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('EDITOR')")
     public void delete(@PathVariable Integer id) {
         employeeService.delete(id);
     }

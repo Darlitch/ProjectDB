@@ -8,6 +8,7 @@ import com.db.project.core.service.ProductionProcessService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +22,7 @@ public class ProductionProcessController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('EDITOR')")
     public ProductionProcessDTO create(@Valid @RequestBody ProductionProcessCreateDTO processDTO) {
         return productionProcessService.create(processDTO);
     }
@@ -57,12 +59,14 @@ public class ProductionProcessController {
     }
 
     @PatchMapping("/{id}")
+    @PreAuthorize("hasRole('EDITOR')")
     public ProductionProcessDTO update(@PathVariable Integer id, @Valid @RequestBody ProductionProcessUpdateDTO processDTO) {
         return productionProcessService.update(id, processDTO);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('EDITOR')")
     public void delete(@PathVariable Integer id) {
         productionProcessService.delete(id);
     }

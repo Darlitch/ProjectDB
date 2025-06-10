@@ -7,6 +7,7 @@ import com.db.project.core.service.BrigadeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class BrigadeController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('EDITOR')")
     public BrigadeDTO create(@Valid @RequestBody BrigadeCreateDTO brigadeDTO) {
         return brigadeService.create(brigadeDTO);
     }
@@ -35,11 +37,13 @@ public class BrigadeController {
     }
 
     @PatchMapping("/{id}")
+    @PreAuthorize("hasRole('EDITOR')")
     public BrigadeDTO update(@PathVariable Integer id, @Valid @RequestBody BrigadeUpdateDTO brigadeDTO) {
         return brigadeService.update(id, brigadeDTO);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('EDITOR')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Integer id) {
         brigadeService.delete(id);
