@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:fragment="header">
+<head th:fragment="header(title)">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="Project DB - Database Management System">
     <meta name="author" content="">
+
+    <title th:text="${title} + ' - Project DB'">Page Title - Project DB</title>
 
     <!-- Custom fonts for this template-->
     <link th:href="@{/static/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
@@ -17,10 +19,6 @@
 
     <!-- HTMX -->
     <script th:src="@{/webjars/htmx.org/dist/htmx.min.js}"></script>
-
-    <!-- Core plugin JavaScript-->
-    <script th:src="@{/static/vendor/jquery/jquery.min.js}"></script>
-    <script th:src="@{/static/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
 </head>
 <body>
 </body>
