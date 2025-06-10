@@ -92,6 +92,11 @@ public class WebController {
         return "sections";
     }
 
+    @GetMapping("/products")
+    public String products() {
+        return "products";
+    }
+
     @GetMapping("/equipment")
     public String equipment() {
         return "equipment";
