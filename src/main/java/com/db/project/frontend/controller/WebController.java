@@ -82,6 +82,11 @@ public class WebController {
         return "types";
     }
 
+    @GetMapping("/workshops")
+    public String workshops() {
+        return "workshops";
+    }
+
     @GetMapping("/equipment")
     public String equipment() {
         return "equipment";
