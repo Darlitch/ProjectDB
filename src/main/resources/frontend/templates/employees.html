@@ -67,7 +67,6 @@
                                 <th>ID</th>
                                 <th>Name</th>
                                 <th>Position</th>
-                                <th>Category</th>
                                 <th>Hire Date</th>
                                 <th>Roles</th>
                                 <th>Actions</th>
@@ -142,7 +141,6 @@
                               return row.position ? row.position.category : '';
                           }
                         },
-                        { data: 'position.category' },
                         { data: 'hireDate' },
                         { data: null,
                           render: function(data, type, row) {

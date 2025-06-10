@@ -67,6 +67,11 @@ public class WebController {
         return "employees";
     }
 
+    @GetMapping("/test-labs")
+    public String testLabs() {
+        return "testlab";
+    }
+
     @PostMapping("/logout")
     public String logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         if (authentication != null) {
