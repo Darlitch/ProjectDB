@@ -74,7 +74,7 @@ public class AuthServiceImpl implements AuthService {
         }
         user.setPassword(passwordEncoder.encode(userChangePasswordDto.newPassword()));
 
-        return userService.update(null);
+        return userService.update(user);
     }
 
     @Override

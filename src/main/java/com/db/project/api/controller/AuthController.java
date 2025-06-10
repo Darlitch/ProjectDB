@@ -46,8 +46,8 @@ public class AuthController {
 
     @PatchMapping("/change-password")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public UserDto changePassword(@Valid @RequestBody UserChangePasswordDTO userChangePasswordDto, @AuthenticationPrincipal UserDetails userDetails) {
-        return authService.changePassword(userChangePasswordDto, userDetails);
+    public void changePassword(@Valid @RequestBody UserChangePasswordDTO userChangePasswordDto, @AuthenticationPrincipal UserDetails userDetails) {
+        authService.changePassword(userChangePasswordDto, userDetails);
     }
 
     @PatchMapping
