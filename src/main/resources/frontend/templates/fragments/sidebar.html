@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:th="http://www.thymeleaf.org">
+
 <body>
     <!-- Sidebar -->
     <ul th:fragment="sidebar" class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
@@ -55,12 +56,28 @@
             </a>
         </li>
 
+        <!-- Nav Item - Attributes -->
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/attributes}">
+                <i class="fas fa-fw fa-list"></i>
+                <span>Attributes</span>
+            </a>
+        </li>
+
+        <!-- Nav Item - Attribute Values -->
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/attribute-values}">
+                <i class="fas fa-fw fa-list-alt"></i>
+                <span>Attribute Values</span>
+            </a>
+        </li>
+
         <!-- Divider -->
         <hr class="sidebar-divider">
 
         <!-- Heading -->
         <div class="sidebar-heading">
-            Production
+            Factory
         </div>
 
         <!-- Nav Item - Workshops -->
@@ -76,6 +93,38 @@
             <a class="nav-link" th:href="@{/sections}">
                 <i class="fas fa-fw fa-layer-group"></i>
                 <span>Sections</span>
+            </a>
+        </li>
+
+        <!-- Nav Item - Section Masters -->
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/section-masters}">
+                <i class="fas fa-fw fa-user-tie"></i>
+                <span>Section Masters</span>
+            </a>
+        </li>
+
+        <!-- Nav Item - Brigades -->
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/brigades}">
+                <i class="fas fa-fw fa-users-cog"></i>
+                <span>Brigades</span>
+            </a>
+        </li>
+
+        <!-- Nav Item - Assembly Jobs -->
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/assembly-jobs}">
+                <i class="fas fa-fw fa-cogs"></i>
+                <span>Assembly Jobs</span>
+            </a>
+        </li>
+
+        <!-- Nav Item - Production Processes -->
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/production-processes}">
+                <i class="fas fa-fw fa-tasks"></i>
+                <span>Production Processes</span>
             </a>
         </li>
 
@@ -103,6 +152,22 @@
             </a>
         </li>
 
+        <!-- Nav Item - Workers -->
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/workers}">
+                <i class="fas fa-fw fa-hard-hat"></i>
+                <span>Workers</span>
+            </a>
+        </li>
+
+        <!-- Nav Item - Testers -->
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/testers}">
+                <i class="fas fa-fw fa-microscope"></i>
+                <span>Testers</span>
+            </a>
+        </li>
+
         <!-- Divider -->
         <hr class="sidebar-divider">
 
@@ -124,6 +189,22 @@
             <a class="nav-link" th:href="@{/labs}">
                 <i class="fas fa-fw fa-vial"></i>
                 <span>Labs</span>
+            </a>
+        </li>
+
+        <!-- Nav Item - Equipment -->
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/equipment}">
+                <i class="fas fa-fw fa-tools"></i>
+                <span>Equipment</span>
+            </a>
+        </li>
+
+        <!-- Nav Item - Test Equipment -->
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/test-equipment}">
+                <i class="fas fa-fw fa-wrench"></i>
+                <span>Test Equipment</span>
             </a>
         </li>
 
@@ -162,4 +243,5 @@
     </ul>
     <!-- End of Sidebar -->
 </body>
+
 </html> 

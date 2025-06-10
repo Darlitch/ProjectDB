@@ -79,13 +79,21 @@ public class SecurityConfig {
                         .loginPage("/login")
                         .loginProcessingUrl("/login")
                         .defaultSuccessUrl("/", true)
+                        .failureUrl("/login?error=true")
                         .permitAll()
                 )
                 .logout(logout -> logout
                         .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                        .logoutSuccessUrl("/login?logout")
+                        .logoutSuccessUrl("/login?logout=true")
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
                         .permitAll()
-                );
+                )
+                .rememberMe(remember -> remember
+                        .key("uniqueAndSecret")
+                        .tokenValiditySeconds(86400) // 1 day
+                )
+                .authenticationProvider(authenticationProvider());
         return http.build();
     }
 
@@ -96,7 +104,8 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(userService);
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userService);
         authProvider.setPasswordEncoder(getPasswordEncoder());
         return authProvider;
     }
@@ -109,6 +118,8 @@ public class SecurityConfig {
     @Bean
     public RoleHierarchy roleHierarchy() {
         String hierarchy = "ROLE_ADMIN > ROLE_EDITOR \n ROLE_EDITOR > ROLE_USER";
-        return RoleHierarchyImpl.fromHierarchy(hierarchy);
+        RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
+        roleHierarchy.setHierarchy(hierarchy);
+        return roleHierarchy;
     }
 }

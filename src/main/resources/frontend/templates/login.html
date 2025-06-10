@@ -25,10 +25,14 @@
                                     </div>
                                     
                                     <!-- Error Alert -->
-                                    <div id="loginError" class="alert alert-danger" style="display: none;">
+                                    <div th:if="${param.error}" class="alert alert-danger">
+                                        Invalid username or password.
+                                    </div>
+                                    <div th:if="${param.logout}" class="alert alert-success">
+                                        You have been logged out.
                                     </div>
                                     
-                                    <form class="user" id="loginForm" th:action="@{/login}" method="post">
+                                    <form class="user" th:action="@{/login}" method="post">
                                         <div class="form-group">
                                             <input type="text" class="form-control form-control-user"
                                                 id="username" name="username" required
