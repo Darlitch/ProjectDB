@@ -8,9 +8,11 @@ import com.db.project.core.service.ProductionProcessService;
 import com.db.project.core.service.ProductService;
 import com.db.project.core.service.BrigadeService;
 import com.db.project.core.service.AssemblyJobService;
+import com.db.project.api.dto.product.ProductShortDTO;
 import com.db.project.api.dto.productionprocess.ProductionProcessCreateDTO;
 import com.db.project.api.dto.productionprocess.ProductionProcessDTO;
 import com.db.project.api.dto.productionprocess.ProductionProcessUpdateDTO;
+import com.db.project.api.mapper.product.ProductMapper;
 import com.db.project.api.mapper.productionprocess.ProductionProcessMapper;
 import com.db.project.api.mapper.productionprocess.ProductionProcessUpdateMapper;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +33,7 @@ public class ProductionProcessServiceImpl implements ProductionProcessService {
     private final ProductService productService;
     private final BrigadeService brigadeService;
     private final AssemblyJobService assemblyJobService;
+    private final ProductMapper productMapper;
 
     @Override
     @Transactional
@@ -78,5 +82,13 @@ public class ProductionProcessServiceImpl implements ProductionProcessService {
     @Override
     public List<ProductionProcessDTO> getByProduct(Integer productId) {
         return productionProcessMapper.toDto(productionProcessRepository.findByProductIdWithDetails(productId));
+    }
+
+    @Override
+    public List<ProductShortDTO> getCurrentProductsInProduction(Integer workshopId, Integer sectionId, Integer categoryId) {
+        return productionProcessRepository.findCurrentProductsInProduction(workshopId, sectionId, categoryId)
+                .stream()
+                .map(pp -> productMapper.toShortDto(pp.getProduct()))
+                .collect(Collectors.toList());
     }
 } 
