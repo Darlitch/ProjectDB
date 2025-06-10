@@ -7,6 +7,7 @@ import com.db.project.core.repository.TestLabRepository;
 import com.db.project.core.service.TestLabService;
 import com.db.project.api.dto.testlab.TestLabCreateDTO;
 import com.db.project.api.dto.testlab.TestLabDTO;
+import com.db.project.api.dto.testlab.TestLabShortDTO;
 import com.db.project.api.dto.testlab.TestLabUpdateDTO;
 import com.db.project.api.mapper.testlab.TestLabMapper;
 import com.db.project.api.mapper.testlab.TestLabUpdateMapper;
@@ -63,5 +64,11 @@ public class TestLabServiceImpl implements TestLabService {
     @Transactional
     public void delete(Integer id) {
         testLabRepository.delete(getEntityById(id));
+    }
+
+    @Override
+    public List<TestLabShortDTO> findAllByProductId(Integer productId) {
+        List<TestLab> labs = testLabRepository.findAllByProductId(productId);
+        return testLabMapper.toShortDto(labs);
     }
 } 

@@ -2,6 +2,7 @@ package com.db.project.api.controller;
 
 import com.db.project.api.dto.testlab.TestLabCreateDTO;
 import com.db.project.api.dto.testlab.TestLabDTO;
+import com.db.project.api.dto.testlab.TestLabShortDTO;
 import com.db.project.api.dto.testlab.TestLabUpdateDTO;
 import com.db.project.core.service.TestLabService;
 import jakarta.validation.Valid;
@@ -32,6 +33,11 @@ public class TestLabController {
     @GetMapping("/{id}")
     public TestLabDTO getById(@PathVariable Integer id) {
         return testLabService.getById(id);
+    }
+
+    @GetMapping("/by-product/{productId}")
+    public List<TestLabShortDTO> getAllByProductId(@PathVariable Integer productId) {
+        return testLabService.findAllByProductId(productId);
     }
 
     @PatchMapping("/{id}")

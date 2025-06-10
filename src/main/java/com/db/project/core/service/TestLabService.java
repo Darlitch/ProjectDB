@@ -3,6 +3,7 @@ package com.db.project.core.service;
 import com.db.project.core.model.TestLab;
 import com.db.project.api.dto.testlab.TestLabCreateDTO;
 import com.db.project.api.dto.testlab.TestLabDTO;
+import com.db.project.api.dto.testlab.TestLabShortDTO;
 import com.db.project.api.dto.testlab.TestLabUpdateDTO;
 import org.mapstruct.Named;
 
@@ -22,4 +23,6 @@ public interface TestLabService {
     TestLabDTO update(Integer id, TestLabUpdateDTO testLabDTO);
 
     void delete(Integer id);
+
+    List<TestLabShortDTO> findAllByProductId(Integer productId);
 } 
