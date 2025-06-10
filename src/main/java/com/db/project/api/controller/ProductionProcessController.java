@@ -48,6 +48,14 @@ public class ProductionProcessController {
         return productionProcessService.getCurrentProductsInProduction(workshopId, sectionId, categoryId);
     }
 
+    @GetMapping("/products")
+    public List<ProductShortDTO> getProductsInProduction(
+            @RequestParam(required = false) Integer workshopId,
+            @RequestParam(required = false) Integer sectionId,
+            @RequestParam(required = false) Integer categoryId) {
+        return productionProcessService.getProductsInProduction(workshopId, sectionId, categoryId);
+    }
+
     @PatchMapping("/{id}")
     public ProductionProcessDTO update(@PathVariable Integer id, @Valid @RequestBody ProductionProcessUpdateDTO processDTO) {
         return productionProcessService.update(id, processDTO);

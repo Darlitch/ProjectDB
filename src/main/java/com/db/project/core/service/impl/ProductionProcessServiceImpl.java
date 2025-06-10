@@ -89,4 +89,11 @@ public class ProductionProcessServiceImpl implements ProductionProcessService {
             productionProcessRepository.findCurrentProductsInProduction(workshopId, sectionId, categoryId)
         );
     }
+
+    @Override
+    public List<ProductShortDTO> getProductsInProduction(Integer workshopId, Integer sectionId, Integer categoryId) {
+        return productionProcessStatisticsMapper.toProductShortDto(
+            productionProcessRepository.findProductsInProduction(workshopId, sectionId, categoryId)
+        );
+    }
 } 

@@ -25,4 +25,6 @@ public interface ProductionProcessService {
     List<ProductionProcessDTO> getByProduct(Integer productId);
 
     List<ProductShortDTO> getCurrentProductsInProduction(Integer workshopId, Integer sectionId, Integer categoryId);
+
+    List<ProductShortDTO> getProductsInProduction(Integer workshopId, Integer sectionId, Integer categoryId);
 } 
