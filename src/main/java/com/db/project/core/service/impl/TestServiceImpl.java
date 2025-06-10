@@ -7,15 +7,18 @@ import com.db.project.core.repository.TestRepository;
 import com.db.project.core.service.TestService;
 import com.db.project.core.service.ProductService;
 import com.db.project.core.service.TestLabService;
+import com.db.project.api.dto.product.ProductShortDTO;
 import com.db.project.api.dto.test.TestCreateDTO;
 import com.db.project.api.dto.test.TestDTO;
 import com.db.project.api.dto.test.TestUpdateDTO;
 import com.db.project.api.mapper.test.TestMapper;
 import com.db.project.api.mapper.test.TestUpdateMapper;
+import com.db.project.api.mapper.test.TestStatisticsMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -26,6 +29,7 @@ public class TestServiceImpl implements TestService {
     private final TestRepository testRepository;
     private final TestMapper testMapper;
     private final TestUpdateMapper testUpdateMapper;
+    private final TestStatisticsMapper testStatisticsMapper;
     private final ProductService productService;
     private final TestLabService testLabService;
 
@@ -71,5 +75,12 @@ public class TestServiceImpl implements TestService {
     @Transactional
     public void delete(Integer id) {
         testRepository.delete(getEntityById(id));
+    }
+
+    @Override
+    public List<ProductShortDTO> getTestedProducts(Integer labId, Integer categoryId, LocalDate startDate, LocalDate endDate) {
+        return testStatisticsMapper.toProductShortDto(
+            testRepository.findProductsByLabAndPeriod(labId, categoryId, startDate, endDate)
+        );
     }
 } 
