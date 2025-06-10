@@ -3,6 +3,7 @@ package com.db.project.core.service.impl;
 import com.db.project.api.dto.jwt.JwtAuthenticationDTO;
 import com.db.project.core.service.JwtService;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
@@ -84,7 +85,8 @@ public class JwtServiceImpl implements JwtService {
         return Jwts.builder()
                 .subject(login)
                 .expiration(date)
-                .signWith(getSingInKey())
+                .issuedAt(new Date())
+                .signWith(getSingInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 

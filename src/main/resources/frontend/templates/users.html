@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+
+<head>
+    <title>Users Management - Project DB</title>
+</head>
+
+<body>
+    <div layout:fragment="content">
+        <!-- Page Heading -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Users Management</h1>
+        </div>
+
+        <!-- Users Table -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Users List</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="usersTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Login</th>
+                                <th>Current Role</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="user : ${users}">
+                                <td th:text="${user.id}">1</td>
+                                <td th:text="${user.login}">admin</td>
+                                <td th:text="${user.role.name}">ROLE_ADMIN</td>
+                                <td>
+                                    <button type="button" class="btn btn-primary btn-sm change-role-btn"
+                                            th:data-user-id="${user.id}"
+                                            th:data-user-login="${user.login}"
+                                            th:data-current-role="${user.role.name}">
+                                        Change Role
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Change Role Modal -->
+        <div class="modal fade" id="changeRoleModal" tabindex="-1" role="dialog" aria-labelledby="changeRoleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="changeRoleModalLabel">Change User Role</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="changeRoleForm">
+                            <input type="hidden" id="userId">
+                            <div class="form-group">
+                                <label>User:</label>
+                                <span id="userLogin" class="font-weight-bold"></span>
+                            </div>
+                            <div class="form-group">
+                                <label>Current Role:</label>
+                                <span id="currentRole" class="font-weight-bold"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="newRole">New Role:</label>
+                                <select class="form-control" id="newRole" name="newRole" required>
+                                    <option value="ROLE_USER">User</option>
+                                    <option value="ROLE_EDITOR">Editor</option>
+                                    <option value="ROLE_ADMIN">Admin</option>
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary" id="saveRoleButton">Save Changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <th:block layout:fragment="scripts">
+        <!-- Page level plugins -->
+        <script th:src="@{/static/vendor/datatables/jquery.dataTables.min.js}"></script>
+        <script th:src="@{/static/vendor/datatables/dataTables.bootstrap4.min.js}"></script>
+
+        <!-- Page level custom scripts -->
+        <script>
+            $(document).ready(function() {
+                console.log('Document ready');
+                
+                // Initialize DataTable
+                $('#usersTable').DataTable();
+
+                // Handle button click
+                $('.change-role-btn').on('click', function(e) {
+                    console.log('Change role button clicked');
+                    e.preventDefault();
+                    
+                    var userId = $(this).data('user-id');
+                    var userLogin = $(this).data('user-login');
+                    var currentRole = $(this).data('current-role');
+                    
+                    console.log('User data:', {
+                        userId: userId,
+                        userLogin: userLogin,
+                        currentRole: currentRole
+                    });
+
+                    $('#userId').val(userId);
+                    $('#userLogin').text(userLogin);
+                    $('#currentRole').text(currentRole);
+                    $('#newRole').val(currentRole);
+
+                    $('#changeRoleModal').modal('show');
+                });
+
+                // Handle role change
+                $('#saveRoleButton').on('click', function(e) {
+                    console.log('Save button clicked');
+                    e.preventDefault();
+                    
+                    var userId = $('#userId').val();
+                    var newRole = $('#newRole').val();
+                    
+                    console.log('Sending request:', {
+                        userId: userId,
+                        newRole: newRole
+                    });
+
+                    $.ajax({
+                        url: '/api/v1/users/' + userId + '/role',
+                        type: 'PATCH',
+                        contentType: 'application/json',
+                        headers: {
+                            'Authorization': 'Bearer ' + sessionStorage.getItem('jwtToken')
+                        },
+                        data: JSON.stringify({
+                            name: newRole
+                        }),
+                        success: function(response) {
+                            console.log('Role updated successfully:', response);
+                            $('#changeRoleModal').modal('hide');
+                            location.reload();
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Error updating role:', error);
+                            console.error('Response:', xhr.responseText);
+                            alert('Error changing role: ' + (xhr.responseText || error));
+                        }
+                    });
+                });
+            });
+        </script>
+    </th:block>
+</body>
+</html> 

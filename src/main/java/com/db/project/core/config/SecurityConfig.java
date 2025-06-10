@@ -1,11 +1,15 @@
 package com.db.project.core.config;
 
 import com.db.project.core.security.JwtFilter;
+import com.db.project.core.service.JwtService;
 import com.db.project.core.service.UserService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,8 +24,11 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
+import java.util.Map;
 
 @SuppressWarnings("java:S4502") // CSRF disabled for API
 @Configuration
@@ -32,6 +39,8 @@ public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
     private final UserService userService;
+    private final JwtService jwtService;
+    private final ObjectMapper objectMapper;
 
     @Bean
     @Order(1)
@@ -78,7 +87,7 @@ public class SecurityConfig {
                 .formLogin(form -> form
                         .loginPage("/login")
                         .loginProcessingUrl("/login")
-                        .defaultSuccessUrl("/", true)
+                        .successHandler(loginSuccessHandler())
                         .failureUrl("/login?error=true")
                         .permitAll()
                 )
@@ -95,6 +104,14 @@ public class SecurityConfig {
                 )
                 .authenticationProvider(authenticationProvider());
         return http.build();
+    }
+
+    private AuthenticationSuccessHandler loginSuccessHandler() {
+        return (request, response, authentication) -> {
+            String token = jwtService.generateJwtToken(authentication.getName());
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            objectMapper.writeValue(response.getOutputStream(), Map.of("token", token));
+        };
     }
 
     @Bean

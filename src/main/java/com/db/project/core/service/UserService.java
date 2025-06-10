@@ -6,6 +6,8 @@ import com.db.project.core.model.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
+import java.util.List;
+
 public interface UserService extends UserDetailsService {
 
     UserDto create(User userForCreate);
@@ -19,6 +21,8 @@ public interface UserService extends UserDetailsService {
     UserDto getById(int id);
 
     User getEntityByLogin(String login);
+
+    List<UserDto> getAll();
 
     @Override
     UserDetails loadUserByUsername(String username);
