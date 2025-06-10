@@ -25,6 +25,23 @@
                 <h6 class="m-0 font-weight-bold text-primary">Test Labs List</h6>
             </div>
             <div class="card-body">
+                <!-- Filters -->
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="productFilter">Filter by Product:</label>
+                            <select class="form-control" id="productFilter">
+                                <option value="">All Products</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>&nbsp;</label>
+                            <button class="btn btn-primary btn-block" id="applyFilters">Apply Filter</button>
+                        </div>
+                    </div>
+                </div>
                 <div class="table-responsive">
                     <table class="table table-bordered" id="testLabsTable" width="100%" cellspacing="0">
                         <thead>
@@ -92,12 +109,12 @@
                         { data: 'name' },
                         { data: 'equipments',
                           render: function(data) {
-                              return data ? data.length : 0;
+                              return data ? data.length : '-';
                           }
                         },
                         { data: 'tests',
                           render: function(data) {
-                              return data ? data.length : 0;
+                              return data ? data.length : '-';
                           }
                         },
                         { data: null,
@@ -113,6 +130,39 @@
                           }
                         }
                     ]
+                });
+
+                // Load products for filter
+                function loadProducts() {
+                    $.ajax({
+                        url: '/api/v1/products',
+                        type: 'GET',
+                        headers: {
+                            'Authorization': 'Bearer ' + sessionStorage.getItem('jwtToken')
+                        },
+                        success: function(products) {
+                            var select = $('#productFilter');
+                            select.empty();
+                            select.append('<option value="">All Products</option>');
+                            products.forEach(function(product) {
+                                select.append(`<option value="${product.id}">Product ${product.serialNum}</option>`);
+                            });
+                        }
+                    });
+                }
+
+                // Initialize
+                loadProducts();
+
+                // Handle filters
+                $('#applyFilters').click(function() {
+                    var productId = $('#productFilter').val();
+                    
+                    if (productId) {
+                        table.ajax.url('/api/v1/test-labs/by-product/' + productId).load();
+                    } else {
+                        table.ajax.url('/api/v1/test-labs').load();
+                    }
                 });
 
                 // Handle create button
