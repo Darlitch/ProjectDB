@@ -132,6 +132,11 @@ public class WebController {
         return "production-process";
     }
 
+    @GetMapping("/settings")
+    public String settings() {
+        return "settings";
+    }
+
     @PostMapping("/logout")
     public String logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         if (authentication != null) {
