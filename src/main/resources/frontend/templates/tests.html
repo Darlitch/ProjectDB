@@ -208,6 +208,47 @@
                 </div>
             </div>
         </div>
+
+        <!-- Equipment Management Modal -->
+        <div class="modal fade" id="equipmentModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Manage Equipment</h5>
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span>&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="addEquipmentForm">
+                            <div class="form-group">
+                                <label for="equipmentId">Equipment:</label>
+                                <select class="form-control" id="equipmentId" required>
+                                    <option value="">Select Equipment</option>
+                                </select>
+                            </div>
+                            <button type="button" class="btn btn-primary mb-3" id="addEquipmentBtn">
+                                <i class="fas fa-plus"></i> Add Equipment
+                            </button>
+                        </form>
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="equipmentTable" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Name</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <th:block layout:fragment="scripts">
@@ -260,8 +301,13 @@
                           }
                         },
                         { data: 'equipments',
-                          render: function(data) {
-                              return data ? data.length : 0;
+                          render: function(data, type, row) {
+                              var count = data ? data.length : 0;
+                              return `
+                                  <button class="btn btn-info btn-sm manage-equipment" data-id="${row.id}">
+                                      <i class="fas fa-tools"></i> ${count}
+                                  </button>
+                              `;
                           }
                         },
                         { data: null,
@@ -626,6 +672,144 @@
                             }
                         });
                     }
+                });
+
+                // Equipment Management
+                var equipmentTable;
+
+                // Handle equipment management
+                $(document).on('click', '.manage-equipment', function() {
+                    currentTestId = $(this).data('id');
+                    
+                    // Initialize equipment table if not already initialized
+                    if (equipmentTable) {
+                        equipmentTable.destroy();
+                    }
+
+                    // Load available equipment and current test data
+                    Promise.all([
+                        $.ajax({
+                            url: '/api/v1/equipments',
+                            type: 'GET',
+                            headers: {
+                                'Authorization': 'Bearer ' + sessionStorage.getItem('jwtToken')
+                            }
+                        }),
+                        $.ajax({
+                            url: '/api/v1/tests/' + currentTestId,
+                            type: 'GET',
+                            headers: {
+                                'Authorization': 'Bearer ' + sessionStorage.getItem('jwtToken')
+                            }
+                        })
+                    ]).then(function([allEquipment, test]) {
+                        // Create a map of assigned equipment IDs
+                        var assignedEquipmentIds = {};
+                        test.equipments.forEach(function(eq) {
+                            assignedEquipmentIds[eq.equipmentId] = true;
+                        });
+
+                        // Filter equipment by laboratory and assignment status
+                        var availableEquipment = allEquipment.filter(function(eq) {
+                            return !assignedEquipmentIds[eq.id] && eq.lab.id === test.lab.id;
+                        });
+
+                        // Update the select options
+                        var select = $('#equipmentId');
+                        select.empty();
+                        select.append('<option value="">Select Equipment</option>');
+                        availableEquipment.forEach(function(eq) {
+                            select.append(`<option value="${eq.id}">${eq.name}</option>`);
+                        });
+
+                        // Initialize the equipment table
+                        equipmentTable = $('#equipmentTable').DataTable({
+                            data: test.equipments,
+                            columns: [
+                                { data: 'equipmentId' },
+                                { 
+                                    data: 'equipmentId',
+                                    render: function(data) {
+                                        var equipment = allEquipment.find(eq => eq.id === data);
+                                        return equipment ? equipment.name : '';
+                                    }
+                                },
+                                {
+                                    data: null,
+                                    render: function(data) {
+                                        return `
+                                            <button class="btn btn-danger btn-sm delete-equipment" data-equipment-id="${data.equipmentId}">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        `;
+                                    }
+                                }
+                            ]
+                        });
+
+                        $('#equipmentModal').modal('show');
+                    }).catch(function(error) {
+                        console.error('Error loading equipment data:', error);
+                        alert('Error loading equipment data. Please try again.');
+                    });
+                });
+
+                // Handle add equipment
+                $('#addEquipmentBtn').click(function() {
+                    var equipmentId = $('#equipmentId').val();
+                    
+                    if (!equipmentId) {
+                        alert('Please select equipment');
+                        return;
+                    }
+
+                    $.ajax({
+                        url: '/api/v1/test-equipment',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({
+                            testId: currentTestId,
+                            equipmentId: parseInt(equipmentId)
+                        }),
+                        headers: {
+                            'Authorization': 'Bearer ' + sessionStorage.getItem('jwtToken')
+                        },
+                        success: function() {
+                            // Reload both tables
+                            table.ajax.reload();
+                            // Refresh equipment modal
+                            $('.manage-equipment[data-id="' + currentTestId + '"]').click();
+                        },
+                        error: function(xhr) {
+                            alert('Error: ' + (xhr.responseJSON?.message || xhr.statusText));
+                        }
+                    });
+                });
+
+                // Handle delete equipment
+                $(document).on('click', '.delete-equipment', function() {
+                    if (!confirm('Are you sure you want to remove this equipment?')) {
+                        return;
+                    }
+
+                    var equipmentId = $(this).data('equipment-id');
+                    
+                    $.ajax({
+                        url: '/api/v1/test-equipment/' + currentTestId + '/' + equipmentId,
+                        type: 'DELETE',
+                        headers: {
+                            'Authorization': 'Bearer ' + sessionStorage.getItem('jwtToken')
+                        },
+                        success: function() {
+                            // Reload both tables
+                            table.ajax.reload();
+                            // Refresh equipment modal
+                            $('.manage-equipment[data-id="' + currentTestId + '"]').click();
+                        },
+                        error: function(xhr) {
+                            alert('Error: ' + (xhr.responseJSON?.message || xhr.statusText));
+                        }
+                    });
                 });
             });
         </script>
