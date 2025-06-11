@@ -107,6 +107,11 @@ public class WebController {
         return "attributes";
     }
 
+    @GetMapping("/attribute-values")
+    public String attributeValues() {
+        return "attribute-values";
+    }
+
     @GetMapping("/tests")
     public String tests() {
         return "tests";
