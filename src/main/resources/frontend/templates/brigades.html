@@ -155,7 +155,7 @@
                         <form id="workerForm">
                             <input type="hidden" id="workerBrigadeId">
                             <input type="hidden" id="workerEmployeeId">
-                            <div class="form-group">
+                            <div class="form-group employee-select-group">
                                 <label for="employeeSelect">Employee:</label>
                                 <select class="form-control" id="employeeSelect" required>
                                     <option value="">Select Employee</option>
@@ -384,18 +384,38 @@
 
                 // Load employees for worker selection
                 function loadEmployees() {
+                    // Сначала получим текущих работников бригады
                     $.ajax({
-                        url: '/api/v1/employees/filter?category=WORKER',
+                        url: '/api/v1/brigades/' + currentBrigadeId,
                         type: 'GET',
                         headers: {
                             'Authorization': 'Bearer ' + sessionStorage.getItem('jwtToken')
                         },
-                        success: function(employees) {
-                            var select = $('#employeeSelect');
-                            select.empty();
-                            select.append('<option value="">Select Employee</option>');
-                            employees.forEach(function(employee) {
-                                select.append(`<option value="${employee.id}">${employee.name}</option>`);
+                        success: function(brigadeData) {
+                            // Создадим множество ID уже добавленных работников
+                            var existingWorkerIds = new Set(
+                                (brigadeData.workers || []).map(worker => worker.employeeId)
+                            );
+
+                            // Теперь загрузим всех работников и отфильтруем уже добавленных
+                            $.ajax({
+                                url: '/api/v1/employees/filter?category=WORKER',
+                                type: 'GET',
+                                headers: {
+                                    'Authorization': 'Bearer ' + sessionStorage.getItem('jwtToken')
+                                },
+                                success: function(employees) {
+                                    var select = $('#employeeSelect');
+                                    select.empty();
+                                    select.append('<option value="">Select Employee</option>');
+                                    
+                                    // Фильтруем и добавляем только тех работников, которых еще нет в бригаде
+                                    employees
+                                        .filter(employee => !existingWorkerIds.has(employee.id))
+                                        .forEach(function(employee) {
+                                            select.append(`<option value="${employee.id}">${employee.name}</option>`);
+                                        });
+                                }
                             });
                         }
                     });
@@ -404,7 +424,6 @@
                 // Initialize
                 loadWorkshops();
                 loadSections();
-                loadEmployees();
 
                 // Handle workshop filter change
                 $('#workshopFilter, #workshopId').change(function() {
@@ -531,6 +550,8 @@
                     $('#workerBrigadeId').val(currentBrigadeId);
                     $('#workerEmployeeId').val('');
                     $('#workerModalTitle').text('Add Worker');
+                    $('.employee-select-group').show(); // Показываем выбор сотрудника
+                    loadEmployees(); // Загружаем список доступных работников
                     $('#workerModal').modal('show');
                 });
 
@@ -542,7 +563,7 @@
                     var workerData = workersTable.row($(this).closest('tr')).data();
                     $('#workerBrigadeId').val(currentBrigadeId);
                     $('#workerEmployeeId').val(employeeId);
-                    $('#employeeSelect').val(employeeId);
+                    $('.employee-select-group').hide(); // Скрываем выбор сотрудника при редактировании
                     $('#isForeman').prop('checked', workerData.isForeman);
                     
                     $('#workerModal').modal('show');
@@ -576,7 +597,7 @@
                     var brigadeId = $('#workerBrigadeId').val();
                     var oldEmployeeId = $('#workerEmployeeId').val();
                     var data = {
-                        employeeId: $('#employeeSelect').val(),
+                        employeeId: oldEmployeeId || $('#employeeSelect').val(),
                         brigadeId: brigadeId,
                         isForeman: $('#isForeman').is(':checked')
                     };
