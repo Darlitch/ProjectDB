@@ -28,7 +28,7 @@ public class PositionController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasRole('EDITOR')")
+    @PreAuthorize("hasRole('ADMIN')")
     public PositionDTO create(@Valid @RequestBody PositionCreateDTO positionDTO) {
         return positionService.create(positionDTO);
     }
@@ -44,14 +44,14 @@ public class PositionController {
     }
 
     @PatchMapping("/{id}")
-    @PreAuthorize("hasRole('EDITOR')")
+    @PreAuthorize("hasRole('ADMIN')")
     public PositionDTO update(@PathVariable Integer id, @Valid @RequestBody PositionUpdateDTO positionDTO) {
         return positionService.update(id, positionDTO);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("hasRole('EDITOR')")
+    @PreAuthorize("hasRole('ADMIN')")
     public void delete(@PathVariable Integer id) {
         positionService.delete(id);
     }

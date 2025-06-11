@@ -48,7 +48,6 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Name</th>
-                                <th>Equipment Count</th>
                                 <th>Tests Count</th>
                                 <th>Actions</th>
                             </tr>
@@ -107,11 +106,6 @@
                     columns: [
                         { data: 'id' },
                         { data: 'name' },
-                        { data: 'equipments',
-                          render: function(data) {
-                              return data ? data.length : '-';
-                          }
-                        },
                         { data: 'tests',
                           render: function(data) {
                               return data ? data.length : '-';
