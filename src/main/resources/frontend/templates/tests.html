@@ -146,6 +146,68 @@
                 </div>
             </div>
         </div>
+
+        <!-- Testers Management Modal -->
+        <div class="modal fade" id="testersModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Manage Testers</h5>
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span>&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row mb-3">
+                            <div class="col">
+                                <button class="btn btn-primary" id="addTesterBtn">
+                                    <i class="fas fa-plus fa-sm"></i> Add Tester
+                                </button>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="testersTable" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Name</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Tester Modal -->
+        <div class="modal fade" id="addTesterModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add Tester</h5>
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span>&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="addTesterForm">
+                            <div class="form-group">
+                                <label for="employeeId">Employee:</label>
+                                <select class="form-control" id="employeeId" required>
+                                    <option value="">Select Employee</option>
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary" id="saveTester">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <th:block layout:fragment="scripts">
@@ -164,11 +226,7 @@
                         beforeSend: function(xhr) {
                             xhr.setRequestHeader('Authorization', 'Bearer ' + sessionStorage.getItem('jwtToken'));
                         },
-                        dataSrc: function(data) {
-                            // Store the original data for filtering
-                            table.originalData = data;
-                            return data;
-                        }
+                        dataSrc: ''
                     },
                     columns: [
                         { data: 'id' },
@@ -192,8 +250,13 @@
                           }
                         },
                         { data: 'testers',
-                          render: function(data) {
-                              return data ? data.length : 0;
+                          render: function(data, type, row) {
+                              var count = data ? data.length : 0;
+                              return `
+                                  <button class="btn btn-info btn-sm manage-testers" data-id="${row.id}">
+                                      <i class="fas fa-users"></i> ${count}
+                                  </button>
+                              `;
                           }
                         },
                         { data: 'equipments',
@@ -397,6 +460,172 @@
                     });
 
                     table.clear().rows.add(filteredData).draw();
+                });
+
+                // Testers Management
+                var currentTestId;
+                var testersTable;
+
+                function initTestersTable(testId) {
+                    if (testersTable) {
+                        testersTable.destroy();
+                    }
+
+                    // Загрузим сначала всех сотрудников
+                    $.ajax({
+                        url: '/api/v1/employees',
+                        type: 'GET',
+                        headers: {
+                            'Authorization': 'Bearer ' + sessionStorage.getItem('jwtToken')
+                        },
+                        success: function(employees) {
+                            // Создадим мапу для быстрого поиска
+                            var employeesMap = {};
+                            employees.forEach(function(emp) {
+                                employeesMap[emp.id] = emp;
+                            });
+
+                            // Теперь инициализируем таблицу
+                            testersTable = $('#testersTable').DataTable({
+                                ajax: {
+                                    url: '/api/v1/tests/' + testId,
+                                    type: 'GET',
+                                    beforeSend: function(xhr) {
+                                        xhr.setRequestHeader('Authorization', 'Bearer ' + sessionStorage.getItem('jwtToken'));
+                                    },
+                                    dataSrc: 'testers'
+                                },
+                                columns: [
+                                    { data: 'employeeId' },
+                                    { 
+                                        data: 'employeeId',
+                                        render: function(data) {
+                                            var employee = employeesMap[data];
+                                            return employee ? employee.name : '';
+                                        }
+                                    },
+                                    {
+                                        data: null,
+                                        render: function(data) {
+                                            return `
+                                                <button class="btn btn-danger btn-sm delete-tester" data-employee-id="${data.employeeId}">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            `;
+                                        }
+                                    }
+                                ]
+                            });
+                        }
+                    });
+                }
+
+                // Load available employees (ENGINEER only)
+                function loadAvailableEmployees() {
+                    // Получим текущих тестировщиков
+                    $.ajax({
+                        url: '/api/v1/tests/' + currentTestId,
+                        type: 'GET',
+                        headers: {
+                            'Authorization': 'Bearer ' + sessionStorage.getItem('jwtToken')
+                        },
+                        success: function(test) {
+                            // Создадим множество существующих тестировщиков
+                            var existingTesters = new Set();
+                            test.testers.forEach(function(tester) {
+                                existingTesters.add(tester.employeeId);
+                            });
+
+                            // Загрузим всех сотрудников
+                            $.ajax({
+                                url: '/api/v1/employees',
+                                type: 'GET',
+                                headers: {
+                                    'Authorization': 'Bearer ' + sessionStorage.getItem('jwtToken')
+                                },
+                                success: function(employees) {
+                                    var select = $('#employeeId');
+                                    select.empty();
+                                    select.append('<option value="">Select Employee</option>');
+                                    
+                                    employees.filter(function(employee) {
+                                        return employee.position && 
+                                               employee.position.category === 'ENGINEER' &&
+                                               !existingTesters.has(employee.id);
+                                    }).forEach(function(employee) {
+                                        select.append(`<option value="${employee.id}">${employee.name}</option>`);
+                                    });
+                                }
+                            });
+                        }
+                    });
+                }
+
+                // Handle manage testers button
+                $(document).on('click', '.manage-testers', function() {
+                    currentTestId = $(this).data('id');
+                    initTestersTable(currentTestId);
+                    $('#testersModal').modal('show');
+                });
+
+                // Handle add tester button
+                $('#addTesterBtn').click(function() {
+                    loadAvailableEmployees();
+                    $('#addTesterForm')[0].reset();
+                    $('#addTesterModal').modal('show');
+                });
+
+                // Handle save tester
+                $('#saveTester').click(function() {
+                    var employeeId = $('#employeeId').val();
+                    
+                    if (!employeeId) {
+                        alert('Please select an employee');
+                        return;
+                    }
+
+                    $.ajax({
+                        url: '/api/v1/testers',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({
+                            testId: currentTestId,
+                            employeeId: employeeId
+                        }),
+                        headers: {
+                            'Authorization': 'Bearer ' + sessionStorage.getItem('jwtToken')
+                        },
+                        success: function() {
+                            $('#addTesterModal').modal('hide');
+                            testersTable.ajax.reload();
+                            table.ajax.reload();
+                        },
+                        error: function(xhr) {
+                            alert('Error adding tester: ' + (xhr.responseJSON?.message || xhr.statusText));
+                        }
+                    });
+                });
+
+                // Handle delete tester
+                $(document).on('click', '.delete-tester', function() {
+                    var employeeId = $(this).data('employee-id');
+                    
+                    if (confirm('Are you sure you want to remove this tester?')) {
+                        $.ajax({
+                            url: '/api/v1/testers/' + currentTestId + '/' + employeeId,
+                            type: 'DELETE',
+                            headers: {
+                                'Authorization': 'Bearer ' + sessionStorage.getItem('jwtToken')
+                            },
+                            success: function() {
+                                testersTable.ajax.reload();
+                                table.ajax.reload();
+                            },
+                            error: function(xhr) {
+                                alert('Error removing tester: ' + (xhr.responseJSON?.message || xhr.statusText));
+                            }
+                        });
+                    }
                 });
             });
         </script>
