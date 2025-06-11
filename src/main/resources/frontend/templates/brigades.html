@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+
+<head>
+    <title>Brigades - Project DB</title>
+    <!-- DataTables CSS -->
+    <link th:href="@{/vendor/datatables/dataTables.bootstrap4.min.css}" rel="stylesheet">
+</head>
+
+<body>
+    <div layout:fragment="content">
+        <!-- Page Heading -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Brigades</h1>
+            <button class="btn btn-primary" id="createBrigadeBtn">
+                <i class="fas fa-plus fa-sm"></i> Add Brigade
+            </button>
+        </div>
+
+        <!-- Filter -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Filter</h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="workshopFilter">Workshop:</label>
+                            <select class="form-control" id="workshopFilter">
+                                <option value="">All Workshops</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="sectionFilter">Section:</label>
+                            <select class="form-control" id="sectionFilter">
+                                <option value="">All Sections</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Brigades Table -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Brigades List</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="brigadesTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Workshop</th>
+                                <th>Section</th>
+                                <th>Workers</th>
+                                <th>Production Processes</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Create/Edit Brigade Modal -->
+        <div class="modal fade" id="brigadeModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="brigadeModalTitle">Add Brigade</h5>
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span>&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="brigadeForm">
+                            <input type="hidden" id="brigadeId">
+                            <div class="form-group">
+                                <label for="name">Name:</label>
+                                <input type="text" class="form-control" id="name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="workshopId">Workshop:</label>
+                                <select class="form-control" id="workshopId" required>
+                                    <option value="">Select Workshop</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="sectionId">Section:</label>
+                                <select class="form-control" id="sectionId" required>
+                                    <option value="">Select Section</option>
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary" id="saveBrigade">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Workers Modal -->
+        <div class="modal fade" id="workersModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Brigade Workers</h5>
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span>&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <button class="btn btn-primary" id="addWorkerBtn">
+                                <i class="fas fa-plus fa-sm"></i> Add Worker
+                            </button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="workersTable" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>Employee</th>
+                                        <th>Is Foreman</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add/Edit Worker Modal -->
+        <div class="modal fade" id="workerModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="workerModalTitle">Add Worker</h5>
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span>&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="workerForm">
+                            <input type="hidden" id="workerBrigadeId">
+                            <input type="hidden" id="workerEmployeeId">
+                            <div class="form-group">
+                                <label for="employeeSelect">Employee:</label>
+                                <select class="form-control" id="employeeSelect" required>
+                                    <option value="">Select Employee</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="isForeman">
+                                    <label class="custom-control-label" for="isForeman">Is Foreman</label>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary" id="saveWorker">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <th:block layout:fragment="scripts">
+        <!-- Page level plugins -->
+        <script th:src="@{/vendor/datatables/jquery.dataTables.min.js}"></script>
+        <script th:src="@{/vendor/datatables/dataTables.bootstrap4.min.js}"></script>
+
+        <!-- Page level custom scripts -->
+        <script th:inline="javascript">
+            $(document).ready(function() {
+                var currentBrigadeId;
+                var workersTable;
+
+                // Initialize Brigades DataTable
+                var brigadesTable = $('#brigadesTable').DataTable({
+                    ajax: {
+                        url: '/api/v1/brigades',
+                        type: 'GET',
+                        beforeSend: function(xhr) {
+                            xhr.setRequestHeader('Authorization', 'Bearer ' + sessionStorage.getItem('jwtToken'));
+                        },
+                        dataSrc: function(data) {
+                            // Store the original data for filtering
+                            brigadesTable.originalData = data;
+                            return data;
+                        }
+                    },
+                    columns: [
+                        { data: 'id' },
+                        { data: 'name' },
+                        { data: 'section',
+                          render: function(data) {
+                              return data && data.workshop ? data.workshop.name : '';
+                          }
+                        },
+                        { data: 'section',
+                          render: function(data) {
+                              return data ? data.name : '';
+                          }
+                        },
+                        { data: 'workers',
+                          render: function(data) {
+                              return `<button class="btn btn-info btn-sm view-workers" data-count="${data ? data.length : 0}">
+                                        <i class="fas fa-users"></i> ${data ? data.length : 0}
+                                     </button>`;
+                          }
+                        },
+                        { data: 'productionProcesses',
+                          render: function(data) {
+                              return data ? data.length : 0;
+                          }
+                        },
+                        { data: null,
+                          render: function(data, type, row) {
+                              return `
+                                  <button class="btn btn-primary btn-sm edit-brigade" data-id="${row.id}">
+                                      <i class="fas fa-edit"></i>
+                                  </button>
+                                  <button class="btn btn-danger btn-sm delete-brigade" data-id="${row.id}">
+                                      <i class="fas fa-trash"></i>
+                                  </button>
+                              `;
+                          }
+                        }
+                    ]
+                });
+
+                // Initialize Workers DataTable
+                function initWorkersTable(brigadeId) {
+                    if (workersTable) {
+                        workersTable.destroy();
+                    }
+
+                    // Сначала загрузим всех работников с полными данными
+                    $.ajax({
+                        url: '/api/v1/brigades/' + brigadeId,
+                        type: 'GET',
+                        async: false,
+                        headers: {
+                            'Authorization': 'Bearer ' + sessionStorage.getItem('jwtToken')
+                        },
+                        success: function(brigadeData) {
+                            var workers = brigadeData.workers || [];
+                            var enrichedWorkers = [];
+
+                            // Загрузим данные о каждом сотруднике
+                            workers.forEach(function(worker) {
+                                $.ajax({
+                                    url: '/api/v1/employees/' + worker.employeeId,
+                                    type: 'GET',
+                                    async: false,
+                                    headers: {
+                                        'Authorization': 'Bearer ' + sessionStorage.getItem('jwtToken')
+                                    },
+                                    success: function(employeeData) {
+                                        enrichedWorkers.push({
+                                            ...worker,
+                                            employee: employeeData,
+                                            searchName: employeeData.name
+                                        });
+                                    }
+                                });
+                            });
+
+                            // Теперь инициализируем таблицу с полными данными
+                            workersTable = $('#workersTable').DataTable({
+                                data: enrichedWorkers,
+                                columns: [
+                                    { 
+                                        data: 'searchName',
+                                        render: function(data, type, row) {
+                                            return data || '';
+                                        }
+                                    },
+                                    { 
+                                        data: 'isForeman',
+                                        render: function(data, type, row) {
+                                            return data ? 'Yes' : 'No';
+                                        }
+                                    },
+                                    { 
+                                        data: null,
+                                        render: function(data, type, row) {
+                                            return `
+                                                <button class="btn btn-primary btn-sm edit-worker" data-employee-id="${row.employeeId}">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="btn btn-danger btn-sm delete-worker" data-employee-id="${row.employeeId}">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            `;
+                                        },
+                                        orderable: false,
+                                        searchable: false
+                                    }
+                                ],
+                                searching: true,
+                                ordering: true,
+                                info: true,
+                                pageLength: 10,
+                                language: {
+                                    search: "Search:",
+                                    zeroRecords: "No matching workers found",
+                                    info: "Showing _START_ to _END_ of _TOTAL_ workers",
+                                    infoEmpty: "No workers available",
+                                    infoFiltered: "(filtered from _MAX_ total workers)"
+                                }
+                            });
+                        }
+                    });
+                }
+
+                // Load workshops for filter and selection
+                function loadWorkshops() {
+                    $.ajax({
+                        url: '/api/v1/workshops',
+                        type: 'GET',
+                        headers: {
+                            'Authorization': 'Bearer ' + sessionStorage.getItem('jwtToken')
+                        },
+                        success: function(workshops) {
+                            var filterSelect = $('#workshopFilter');
+                            var modalSelect = $('#workshopId');
+                            
+                            filterSelect.empty();
+                            modalSelect.empty();
+                            
+                            filterSelect.append('<option value="">All Workshops</option>');
+                            modalSelect.append('<option value="">Select Workshop</option>');
+                            
+                            workshops.forEach(function(workshop) {
+                                filterSelect.append(`<option value="${workshop.id}">${workshop.name}</option>`);
+                                modalSelect.append(`<option value="${workshop.id}">${workshop.name}</option>`);
+                            });
+                        }
+                    });
+                }
+
+                // Load sections for filter and selection
+                function loadSections(workshopId) {
+                    $.ajax({
+                        url: '/api/v1/sections',
+                        type: 'GET',
+                        headers: {
+                            'Authorization': 'Bearer ' + sessionStorage.getItem('jwtToken')
+                        },
+                        success: function(sections) {
+                            var filterSelect = $('#sectionFilter');
+                            var modalSelect = $('#sectionId');
+                            
+                            filterSelect.empty();
+                            modalSelect.empty();
+                            
+                            filterSelect.append('<option value="">All Sections</option>');
+                            modalSelect.append('<option value="">Select Section</option>');
+                            
+                            sections.forEach(function(section) {
+                                if (!workshopId || (section.workshop && section.workshop.id == workshopId)) {
+                                    filterSelect.append(`<option value="${section.id}">${section.name}</option>`);
+                                    modalSelect.append(`<option value="${section.id}">${section.name}</option>`);
+                                }
+                            });
+                        }
+                    });
+                }
+
+                // Load employees for worker selection
+                function loadEmployees() {
+                    $.ajax({
+                        url: '/api/v1/employees/filter?category=WORKER',
+                        type: 'GET',
+                        headers: {
+                            'Authorization': 'Bearer ' + sessionStorage.getItem('jwtToken')
+                        },
+                        success: function(employees) {
+                            var select = $('#employeeSelect');
+                            select.empty();
+                            select.append('<option value="">Select Employee</option>');
+                            employees.forEach(function(employee) {
+                                select.append(`<option value="${employee.id}">${employee.name}</option>`);
+                            });
+                        }
+                    });
+                }
+
+                // Initialize
+                loadWorkshops();
+                loadSections();
+                loadEmployees();
+
+                // Handle workshop filter change
+                $('#workshopFilter, #workshopId').change(function() {
+                    var workshopId = $(this).val();
+                    var isModal = this.id === 'workshopId';
+                    
+                    if (isModal) {
+                        loadSections(workshopId);
+                    } else {
+                        // Apply filter
+                        var sectionId = $('#sectionFilter').val();
+                        applyFilters();
+                    }
+                });
+
+                // Handle section filter change
+                $('#sectionFilter').change(function() {
+                    applyFilters();
+                });
+
+                // Handle create brigade button
+                $('#createBrigadeBtn').click(function() {
+                    $('#brigadeForm')[0].reset();
+                    $('#brigadeId').val('');
+                    $('#brigadeModalTitle').text('Add Brigade');
+                    $('#brigadeModal').modal('show');
+                });
+
+                // Handle edit brigade button
+                $(document).on('click', '.edit-brigade', function() {
+                    var id = $(this).data('id');
+                    $('#brigadeModalTitle').text('Edit Brigade');
+                    
+                    $.ajax({
+                        url: '/api/v1/brigades/' + id,
+                        type: 'GET',
+                        headers: {
+                            'Authorization': 'Bearer ' + sessionStorage.getItem('jwtToken')
+                        },
+                        success: function(brigade) {
+                            $('#brigadeId').val(brigade.id);
+                            $('#name').val(brigade.name);
+                            
+                            if (brigade.section) {
+                                if (brigade.section.workshop) {
+                                    $('#workshopId').val(brigade.section.workshop.id);
+                                    loadSections(brigade.section.workshop.id);
+                                }
+                                $('#sectionId').val(brigade.section.id);
+                            }
+                            
+                            $('#brigadeModal').modal('show');
+                        },
+                        error: function(xhr) {
+                            alert('Error loading brigade data: ' + (xhr.responseJSON?.message || xhr.statusText));
+                        }
+                    });
+                });
+
+                // Handle delete brigade button
+                $(document).on('click', '.delete-brigade', function() {
+                    var id = $(this).data('id');
+                    if (confirm('Are you sure you want to delete this brigade?')) {
+                        $.ajax({
+                            url: '/api/v1/brigades/' + id,
+                            type: 'DELETE',
+                            headers: {
+                                'Authorization': 'Bearer ' + sessionStorage.getItem('jwtToken')
+                            },
+                            success: function() {
+                                brigadesTable.ajax.reload();
+                            },
+                            error: function(xhr) {
+                                alert('Error deleting brigade: ' + (xhr.responseJSON?.message || xhr.statusText));
+                            }
+                        });
+                    }
+                });
+
+                // Handle save brigade
+                $('#saveBrigade').click(function() {
+                    var id = $('#brigadeId').val();
+                    var data = {
+                        name: $('#name').val(),
+                        sectionId: $('#sectionId').val()
+                    };
+
+                    if (!data.name || !data.sectionId) {
+                        alert('Please fill in all required fields');
+                        return;
+                    }
+
+                    $.ajax({
+                        url: '/api/v1/brigades' + (id ? '/' + id : ''),
+                        type: id ? 'PATCH' : 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify(data),
+                        headers: {
+                            'Authorization': 'Bearer ' + sessionStorage.getItem('jwtToken')
+                        },
+                        success: function() {
+                            $('#brigadeModal').modal('hide');
+                            brigadesTable.ajax.reload();
+                        },
+                        error: function(xhr) {
+                            alert('Error saving brigade: ' + (xhr.responseJSON?.message || xhr.statusText));
+                        }
+                    });
+                });
+
+                // Handle view workers button
+                $(document).on('click', '.view-workers', function() {
+                    var row = $(this).closest('tr');
+                    var data = brigadesTable.row(row).data();
+                    currentBrigadeId = data.id;
+                    
+                    initWorkersTable(currentBrigadeId);
+                    $('#workersModal').modal('show');
+                });
+
+                // Handle add worker button
+                $('#addWorkerBtn').click(function() {
+                    $('#workerForm')[0].reset();
+                    $('#workerBrigadeId').val(currentBrigadeId);
+                    $('#workerEmployeeId').val('');
+                    $('#workerModalTitle').text('Add Worker');
+                    $('#workerModal').modal('show');
+                });
+
+                // Handle edit worker button
+                $(document).on('click', '.edit-worker', function() {
+                    var employeeId = $(this).data('employee-id');
+                    $('#workerModalTitle').text('Edit Worker');
+                    
+                    var workerData = workersTable.row($(this).closest('tr')).data();
+                    $('#workerBrigadeId').val(currentBrigadeId);
+                    $('#workerEmployeeId').val(employeeId);
+                    $('#employeeSelect').val(employeeId);
+                    $('#isForeman').prop('checked', workerData.isForeman);
+                    
+                    $('#workerModal').modal('show');
+                });
+
+                // Handle delete worker button
+                $(document).on('click', '.delete-worker', function() {
+                    var employeeId = $(this).data('employee-id');
+                    if (confirm('Are you sure you want to remove this worker from the brigade?')) {
+                        $.ajax({
+                            url: '/api/v1/workers/' + employeeId + '/' + currentBrigadeId,
+                            type: 'DELETE',
+                            headers: {
+                                'Authorization': 'Bearer ' + sessionStorage.getItem('jwtToken')
+                            },
+                            success: function() {
+                                // Перезагружаем таблицу бригад
+                                brigadesTable.ajax.reload();
+                                // Переинициализируем таблицу работников
+                                initWorkersTable(currentBrigadeId);
+                            },
+                            error: function(xhr) {
+                                alert('Error removing worker: ' + (xhr.responseJSON?.message || xhr.statusText));
+                            }
+                        });
+                    }
+                });
+
+                // Handle save worker
+                $('#saveWorker').click(function() {
+                    var brigadeId = $('#workerBrigadeId').val();
+                    var oldEmployeeId = $('#workerEmployeeId').val();
+                    var data = {
+                        employeeId: $('#employeeSelect').val(),
+                        brigadeId: brigadeId,
+                        isForeman: $('#isForeman').is(':checked')
+                    };
+
+                    if (!data.employeeId) {
+                        alert('Please select an employee');
+                        return;
+                    }
+
+                    var url, method;
+                    if (oldEmployeeId) {
+                        url = '/api/v1/workers/' + oldEmployeeId + '/' + brigadeId;
+                        method = 'PATCH';
+                    } else {
+                        url = '/api/v1/workers';
+                        method = 'POST';
+                    }
+
+                    $.ajax({
+                        url: url,
+                        type: method,
+                        contentType: 'application/json',
+                        data: JSON.stringify(data),
+                        headers: {
+                            'Authorization': 'Bearer ' + sessionStorage.getItem('jwtToken')
+                        },
+                                                    success: function() {
+                                $('#workerModal').modal('hide');
+                                // Перезагружаем таблицу бригад
+                                brigadesTable.ajax.reload();
+                                // Переинициализируем таблицу работников
+                                initWorkersTable(currentBrigadeId);
+                            },
+                        error: function(xhr) {
+                            alert('Error saving worker: ' + (xhr.responseJSON?.message || xhr.statusText));
+                        }
+                    });
+                });
+
+                // Handle filters
+                function applyFilters() {
+                    var workshopId = $('#workshopFilter').val();
+                    var sectionId = $('#sectionFilter').val();
+
+                    var filteredData = brigadesTable.originalData.filter(function(brigade) {
+                        var matchWorkshop = !workshopId || (brigade.section && brigade.section.workshop && brigade.section.workshop.id == workshopId);
+                        var matchSection = !sectionId || (brigade.section && brigade.section.id == sectionId);
+                        return matchWorkshop && matchSection;
+                    });
+
+                    brigadesTable.clear().rows.add(filteredData).draw();
+                }
+            });
+        </script>
+    </th:block>
+</body>
+</html> 

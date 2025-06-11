@@ -117,6 +117,11 @@ public class WebController {
         return "assembly-jobs";
     }
 
+    @GetMapping("/brigades")
+    public String brigades() {
+        return "brigades";
+    }
+
     @GetMapping("/tests")
     public String tests() {
         return "tests";
