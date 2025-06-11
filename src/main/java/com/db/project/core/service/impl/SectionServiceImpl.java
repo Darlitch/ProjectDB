@@ -70,4 +70,9 @@ public class SectionServiceImpl implements SectionService {
     public void delete(Integer id) {
         sectionRepository.delete(getEntityById(id));
     }
+
+    @Override
+    public List<SectionDTO> getByWorkshop(Integer workshopId) {
+        return sectionMapper.toDto(sectionRepository.findByWorkshopWithHead(workshopId));
+    }
 } 

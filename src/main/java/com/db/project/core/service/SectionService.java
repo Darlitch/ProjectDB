@@ -22,4 +22,6 @@ public interface SectionService {
     SectionDTO update(Integer id, SectionUpdateDTO sectionDTO);
 
     void delete(Integer id);
+
+    List<SectionDTO> getByWorkshop(Integer workshopId);
 } 

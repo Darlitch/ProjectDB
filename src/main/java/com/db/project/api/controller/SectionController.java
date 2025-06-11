@@ -55,7 +55,7 @@ public class SectionController {
     }
 
     @GetMapping("/filter")
-    public List<SectionWithHeadDTO> getByWorkshopWithHead(@RequestParam(required = false) Integer workshopId) {
-        return sectionWithHeadMapper.toDto(sectionRepository.findByWorkshopWithHead(workshopId));
+    public List<SectionDTO> getByWorkshop(@RequestParam(required = false) Integer workshopId) {
+        return sectionService.getByWorkshop(workshopId);
     }
 } 
