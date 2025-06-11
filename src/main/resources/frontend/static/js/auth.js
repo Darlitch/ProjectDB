@@ -1,14 +1,23 @@
 // JWT Token management
-function setTokens(token) {
-    sessionStorage.setItem('jwtToken', token);
+const AUTH_TOKEN_KEY = 'auth_token';
+const REFRESH_TOKEN_KEY = 'refresh_token';
+
+function setTokens(authToken, refreshToken) {
+    localStorage.setItem(AUTH_TOKEN_KEY, authToken);
+    localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
 }
 
-function getToken() {
-    return sessionStorage.getItem('jwtToken');
+function getAuthToken() {
+    return localStorage.getItem(AUTH_TOKEN_KEY);
+}
+
+function getRefreshToken() {
+    return localStorage.getItem(REFRESH_TOKEN_KEY);
 }
 
 function clearTokens() {
-    sessionStorage.removeItem('jwtToken');
+    localStorage.removeItem(AUTH_TOKEN_KEY);
+    localStorage.removeItem(REFRESH_TOKEN_KEY);
 }
 
 // Authentication functions
@@ -28,7 +37,7 @@ async function login(username, password) {
         }
 
         const data = await response.json();
-        setTokens(data.token);
+        setTokens(data.token, data.refreshToken);
         return true;
     } catch (error) {
         console.error('Login error:', error);
@@ -37,21 +46,27 @@ async function login(username, password) {
 }
 
 async function refreshToken() {
+    const refreshToken = getRefreshToken();
+    if (!refreshToken) {
+        throw new Error('No refresh token available');
+    }
+
     try {
         const response = await fetch('/api/v1/auth/refresh', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + getToken()
-            }
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ refreshToken })
         });
 
         if (!response.ok) {
+            clearTokens();
             throw new Error('Token refresh failed');
         }
 
         const data = await response.json();
-        setTokens(data.token);
+        setTokens(data.token, data.refreshToken);
         return true;
     } catch (error) {
         console.error('Token refresh error:', error);
@@ -59,88 +74,51 @@ async function refreshToken() {
     }
 }
 
-// Setup AJAX interceptor for token refresh
-$(document).ready(function() {
-    let isRefreshing = false;
-    let refreshSubscribers = [];
-
-    // Function to add request to queue
-    function subscribeTokenRefresh(callback) {
-        refreshSubscribers.push(callback);
+// Add Authorization header to all API requests
+function addAuthHeader(headers = {}) {
+    const token = getAuthToken();
+    if (token) {
+        return {
+            ...headers,
+            'Authorization': `Bearer ${token}`
+        };
     }
+    return headers;
+}
 
-    // Function to notify all subscribers
-    function onTokenRefreshed(token) {
-        refreshSubscribers.map(callback => callback(token));
-        refreshSubscribers = [];
-    }
-
-    // Function to reject all subscribers
-    function onTokenRefreshError(error) {
-        refreshSubscribers.map(callback => callback(null, error));
-        refreshSubscribers = [];
-    }
-
-    // Setup jQuery AJAX interceptor
-    $.ajaxSetup({
-        beforeSend: function(xhr) {
-            if (getToken()) {
-                xhr.setRequestHeader('Authorization', 'Bearer ' + getToken());
+// Fetch wrapper with automatic token refresh
+async function fetchWithAuth(url, options = {}) {
+    try {
+        // Add auth header
+        options.headers = addAuthHeader(options.headers);
+        
+        // Make request
+        let response = await fetch(url, options);
+        
+        // If unauthorized and we have a refresh token, try to refresh
+        if (response.status === 401 && getRefreshToken()) {
+            const refreshed = await refreshToken();
+            if (refreshed) {
+                // Retry original request with new token
+                options.headers = addAuthHeader(options.headers);
+                response = await fetch(url, options);
             }
         }
-    });
+        
+        return response;
+    } catch (error) {
+        console.error('Fetch error:', error);
+        throw error;
+    }
+}
 
-    // Handle 401 responses globally
-    $(document).ajaxError(function(event, jqXHR, ajaxSettings, thrownError) {
-        if (jqXHR.status === 401 && getToken()) {
-            // If we're not already refreshing
-            if (!isRefreshing) {
-                isRefreshing = true;
-
-                // Try to refresh the token
-                refreshToken()
-                    .then(success => {
-                        isRefreshing = false;
-                        onTokenRefreshed(getToken());
-
-                        // Retry the original request
-                        $.ajax({
-                            ...ajaxSettings,
-                            headers: {
-                                ...ajaxSettings.headers,
-                                'Authorization': 'Bearer ' + getToken()
-                            }
-                        });
-                    })
-                    .catch(error => {
-                        isRefreshing = false;
-                        onTokenRefreshError(error);
-                        // Redirect to login page if refresh fails
-                        window.location.href = '/login';
-                    });
-            }
-
-            // Add request to queue
-            const retryOriginalRequest = new Promise((resolve, reject) => {
-                subscribeTokenRefresh(token => {
-                    if (token) {
-                        resolve($.ajax({
-                            ...ajaxSettings,
-                            headers: {
-                                ...ajaxSettings.headers,
-                                'Authorization': 'Bearer ' + token
-                            }
-                        }));
-                    } else {
-                        reject();
-                    }
-                });
-            });
-
-            return retryOriginalRequest;
-        }
-    });
-});
+// Export functions
+window.auth = {
+    login,
+    refreshToken,
+    fetchWithAuth,
+    clearTokens
+};
 
 // Form handling
 document.addEventListener('DOMContentLoaded', function() {
@@ -151,10 +129,16 @@ document.addEventListener('DOMContentLoaded', function() {
             
             const usernameInput = document.getElementById('username');
             const passwordInput = document.getElementById('password');
+            const rememberMe = document.getElementById('remember-me');
             const errorDiv = document.getElementById('loginError');
             
             try {
                 await login(usernameInput.value, passwordInput.value);
+                // If remember-me is not checked, we'll set token expiration
+                if (!rememberMe.checked) {
+                    // Token will be cleared after browser session
+                    sessionStorage.setItem('remember-me', 'false');
+                }
                 window.location.href = '/';
             } catch (error) {
                 errorDiv.textContent = error.message;
