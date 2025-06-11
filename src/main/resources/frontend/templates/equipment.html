@@ -54,7 +54,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>&nbsp;</label>
-                            <button class="btn btn-primary btn-block" id="applyFilters">Apply Filters</button>
+                            <button class="btn btn-secondary btn-block" id="resetFilters" type="button">Reset Filters</button>
                         </div>
                     </div>
                 </div>
@@ -234,7 +234,7 @@
                 loadCategories();
 
                 // Handle filters
-                $('#applyFilters').click(function() {
+                $('#labFilter, #productFilter, #categoryFilter, #startDate, #endDate').change(function() {
                     var labId = $('#labFilter').val();
                     var productId = $('#productFilter').val();
                     var categoryId = $('#categoryFilter').val();
@@ -258,6 +258,17 @@
                     }
                     
                     table.ajax.url(url).load();
+                });
+
+                // Handle reset filters
+                $('#resetFilters').click(function() {
+                    $('#labFilter').val('');
+                    $('#productFilter').val('');
+                    $('#categoryFilter').val('');
+                    $('#startDate').val('');
+                    $('#endDate').val('');
+                    // Trigger change to reload table
+                    $('#labFilter, #productFilter, #categoryFilter, #startDate, #endDate').trigger('change');
                 });
 
                 // Handle create button
