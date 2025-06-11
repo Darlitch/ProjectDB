@@ -65,6 +65,9 @@
                             <input type="date" class="form-control" id="endDateFilter">
                         </div>
                     </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button class="btn btn-secondary btn-block" id="resetFilters" type="button">Reset Filters</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -267,7 +270,10 @@
                         beforeSend: function(xhr) {
                             xhr.setRequestHeader('Authorization', 'Bearer ' + sessionStorage.getItem('jwtToken'));
                         },
-                        dataSrc: ''
+                        dataSrc: function(json) {
+                            table.originalData = json;
+                            return json;
+                        }
                     },
                     columns: [
                         { data: 'id' },
@@ -506,6 +512,17 @@
                     });
 
                     table.clear().rows.add(filteredData).draw();
+                });
+
+                // Handle reset filters
+                $('#resetFilters').click(function() {
+                    $('#labFilter').val('');
+                    $('#categoryFilter').val('');
+                    $('#resultFilter').val('');
+                    $('#startDateFilter').val('');
+                    $('#endDateFilter').val('');
+                    // Trigger change to reload table
+                    $('#labFilter, #categoryFilter, #resultFilter, #startDateFilter, #endDateFilter').trigger('change');
                 });
 
                 // Testers Management
