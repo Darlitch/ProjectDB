@@ -43,12 +43,6 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label>&nbsp;</label>
-                            <button class="btn btn-primary btn-block" id="applyFilters">Apply Filters</button>
-                        </div>
-                    </div>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-bordered" id="typesTable" width="100%" cellspacing="0">
@@ -192,7 +186,7 @@
                 loadWorkshops();
 
                 // Handle filters
-                $('#applyFilters').click(function() {
+                $('#categoryFilter, #workshopFilter').change(function() {
                     var categoryId = $('#categoryFilter').val();
                     var workshopId = $('#workshopFilter').val();
                     var url = '/api/v1/product-types';

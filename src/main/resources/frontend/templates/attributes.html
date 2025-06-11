@@ -25,23 +25,6 @@
                 <h6 class="m-0 font-weight-bold text-primary">Attributes List</h6>
             </div>
             <div class="card-body">
-                <!-- Filters -->
-                <div class="row mb-3">
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="categoryFilter">Filter by Category:</label>
-                            <select class="form-control" id="categoryFilter">
-                                <option value="">All Categories</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label>&nbsp;</label>
-                            <button class="btn btn-primary btn-block" id="applyFilters">Apply Filter</button>
-                        </div>
-                    </div>
-                </div>
                 <div class="table-responsive">
                     <table class="table table-bordered" id="attributesTable" width="100%" cellspacing="0">
                         <thead>
@@ -49,7 +32,6 @@
                                 <th>ID</th>
                                 <th>Name</th>
                                 <th>Category</th>
-                                <th>Values Count</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -114,11 +96,6 @@
                         { data: 'id' },
                         { data: 'name' },
                         { data: 'category.name' },
-                        { data: 'attributeValues',
-                          render: function(data) {
-                              return data ? data.length : 0;
-                          }
-                        },
                         { data: null,
                           render: function(data, type, row) {
                               return `
@@ -134,7 +111,7 @@
                     ]
                 });
 
-                // Load categories for filter and form
+                // Load categories for form only
                 function loadCategories() {
                     $.ajax({
                         url: '/api/v1/product-categories',
@@ -143,17 +120,10 @@
                             'Authorization': 'Bearer ' + sessionStorage.getItem('jwtToken')
                         },
                         success: function(categories) {
-                            var filterSelect = $('#categoryFilter');
                             var formSelect = $('#categoryId');
-                            
-                            filterSelect.empty();
                             formSelect.empty();
-                            
-                            filterSelect.append('<option value="">All Categories</option>');
                             formSelect.append('<option value="">Select Category</option>');
-                            
                             categories.forEach(function(category) {
-                                filterSelect.append(`<option value="${category.id}">${category.name}</option>`);
                                 formSelect.append(`<option value="${category.id}">${category.name}</option>`);
                             });
                         }
@@ -162,12 +132,6 @@
 
                 // Initialize
                 loadCategories();
-
-                // Handle filters
-                $('#applyFilters').click(function() {
-                    var categoryId = $('#categoryFilter').val();
-                    table.ajax.reload();
-                });
 
                 // Handle create button
                 $('#createAttributeBtn').click(function() {
