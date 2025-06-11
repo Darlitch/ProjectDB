@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+
+<head>
+    <title>Tests - Project DB</title>
+    <!-- DataTables CSS -->
+    <link th:href="@{/vendor/datatables/dataTables.bootstrap4.min.css}" rel="stylesheet">
+</head>
+
+<body>
+    <div layout:fragment="content">
+        <!-- Page Heading -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Tests</h1>
+            <button class="btn btn-primary" id="createTestBtn">
+                <i class="fas fa-plus fa-sm"></i> Add Test
+            </button>
+        </div>
+
+        <!-- Filter -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Filter</h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="labFilter">Lab:</label>
+                            <select class="form-control" id="labFilter">
+                                <option value="">All Labs</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="categoryFilter">Category:</label>
+                            <select class="form-control" id="categoryFilter">
+                                <option value="">All Categories</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="resultFilter">Result:</label>
+                            <select class="form-control" id="resultFilter">
+                                <option value="">All Results</option>
+                                <option value="SUCCESS">Success</option>
+                                <option value="FAILED">Failed</option>
+                                <option value="IN_PROGRESS">In Progress</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="startDateFilter">Start Date:</label>
+                            <input type="date" class="form-control" id="startDateFilter">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="endDateFilter">End Date:</label>
+                            <input type="date" class="form-control" id="endDateFilter">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tests Table -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Tests List</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="testsTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Product</th>
+                                <th>Lab</th>
+                                <th>Result</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Testers</th>
+                                <th>Equipment</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Create/Edit Test Modal -->
+        <div class="modal fade" id="testModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="testModalTitle">Add Test</h5>
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span>&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="testForm">
+                            <input type="hidden" id="testId">
+                            <div class="form-group">
+                                <label for="productId">Product:</label>
+                                <select class="form-control" id="productId" required>
+                                    <option value="">Select Product</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="labId">Lab:</label>
+                                <select class="form-control" id="labId" required>
+                                    <option value="">Select Lab</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="result">Result:</label>
+                                <select class="form-control" id="result" required>
+                                    <option value="">Select Result</option>
+                                    <option value="SUCCESS">Success</option>
+                                    <option value="FAILED">Failed</option>
+                                    <option value="IN_PROGRESS">In Progress</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="startDate">Start Date:</label>
+                                <input type="date" class="form-control" id="startDate" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="endDate">End Date:</label>
+                                <input type="date" class="form-control" id="endDate">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary" id="saveTest">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <th:block layout:fragment="scripts">
+        <!-- Page level plugins -->
+        <script th:src="@{/vendor/datatables/jquery.dataTables.min.js}"></script>
+        <script th:src="@{/vendor/datatables/dataTables.bootstrap4.min.js}"></script>
+
+        <!-- Page level custom scripts -->
+        <script th:inline="javascript">
+            $(document).ready(function() {
+                // Initialize DataTable
+                var table = $('#testsTable').DataTable({
+                    ajax: {
+                        url: '/api/v1/tests',
+                        type: 'GET',
+                        beforeSend: function(xhr) {
+                            xhr.setRequestHeader('Authorization', 'Bearer ' + sessionStorage.getItem('jwtToken'));
+                        },
+                        dataSrc: function(data) {
+                            // Store the original data for filtering
+                            table.originalData = data;
+                            return data;
+                        }
+                    },
+                    columns: [
+                        { data: 'id' },
+                        { data: 'product',
+                          render: function(data) {
+                              if (!data) return '';
+                              var category = data.type && data.type.category ? data.type.category.name : '';
+                              return `${data.serialNum} (${category})`;
+                          }
+                        },
+                        { data: 'lab',
+                          render: function(data) {
+                              return data ? data.name : '';
+                          }
+                        },
+                        { data: 'result' },
+                        { data: 'startDate' },
+                        { data: 'endDate',
+                          render: function(data) {
+                              return data || '';
+                          }
+                        },
+                        { data: 'testers',
+                          render: function(data) {
+                              return data ? data.length : 0;
+                          }
+                        },
+                        { data: 'equipments',
+                          render: function(data) {
+                              return data ? data.length : 0;
+                          }
+                        },
+                        { data: null,
+                          render: function(data, type, row) {
+                              return `
+                                  <button class="btn btn-primary btn-sm edit-test" data-id="${row.id}">
+                                      <i class="fas fa-edit"></i>
+                                  </button>
+                                  <button class="btn btn-danger btn-sm delete-test" data-id="${row.id}">
+                                      <i class="fas fa-trash"></i>
+                                  </button>
+                              `;
+                          }
+                        }
+                    ]
+                });
+
+                // Load products for selection
+                function loadProducts() {
+                    $.ajax({
+                        url: '/api/v1/products',
+                        type: 'GET',
+                        headers: {
+                            'Authorization': 'Bearer ' + sessionStorage.getItem('jwtToken')
+                        },
+                        success: function(products) {
+                            var select = $('#productId');
+                            select.empty();
+                            select.append('<option value="">Select Product</option>');
+                            products.forEach(function(product) {
+                                select.append(`<option value="${product.id}">${product.serialNum}</option>`);
+                            });
+                        }
+                    });
+                }
+
+                // Load labs for filter and selection
+                function loadLabs() {
+                    $.ajax({
+                        url: '/api/v1/test-labs',
+                        type: 'GET',
+                        headers: {
+                            'Authorization': 'Bearer ' + sessionStorage.getItem('jwtToken')
+                        },
+                        success: function(labs) {
+                            var filterSelect = $('#labFilter');
+                            var modalSelect = $('#labId');
+                            
+                            filterSelect.empty();
+                            modalSelect.empty();
+                            
+                            filterSelect.append('<option value="">All Labs</option>');
+                            modalSelect.append('<option value="">Select Lab</option>');
+                            
+                            labs.forEach(function(lab) {
+                                filterSelect.append(`<option value="${lab.id}">${lab.name}</option>`);
+                                modalSelect.append(`<option value="${lab.id}">${lab.name}</option>`);
+                            });
+                        }
+                    });
+                }
+
+                // Load categories for filter
+                function loadCategories() {
+                    $.ajax({
+                        url: '/api/v1/product-categories',
+                        type: 'GET',
+                        headers: {
+                            'Authorization': 'Bearer ' + sessionStorage.getItem('jwtToken')
+                        },
+                        success: function(categories) {
+                            var select = $('#categoryFilter');
+                            select.empty();
+                            select.append('<option value="">All Categories</option>');
+                            categories.forEach(function(category) {
+                                select.append(`<option value="${category.id}">${category.name}</option>`);
+                            });
+                        }
+                    });
+                }
+
+                // Initialize
+                loadProducts();
+                loadLabs();
+                loadCategories();
+
+                // Set default dates
+                var today = new Date().toISOString().split('T')[0];
+                $('#startDate').val(today);
+
+                // Handle create button
+                $('#createTestBtn').click(function() {
+                    $('#testForm')[0].reset();
+                    $('#testId').val('');
+                    $('#startDate').val(today);
+                    $('#testModalTitle').text('Add Test');
+                    $('#testModal').modal('show');
+                });
+
+                // Handle edit button
+                $(document).on('click', '.edit-test', function() {
+                    var id = $(this).data('id');
+                    $('#testModalTitle').text('Edit Test');
+                    
+                    $.ajax({
+                        url: '/api/v1/tests/' + id,
+                        type: 'GET',
+                        headers: {
+                            'Authorization': 'Bearer ' + sessionStorage.getItem('jwtToken')
+                        },
+                        success: function(test) {
+                            $('#testId').val(test.id);
+                            $('#productId').val(test.product.id);
+                            $('#labId').val(test.lab.id);
+                            $('#result').val(test.result);
+                            $('#startDate').val(test.startDate);
+                            $('#endDate').val(test.endDate || '');
+                            $('#testModal').modal('show');
+                        },
+                        error: function(xhr) {
+                            alert('Error loading test data: ' + (xhr.responseJSON?.message || xhr.statusText));
+                        }
+                    });
+                });
+
+                // Handle delete button
+                $(document).on('click', '.delete-test', function() {
+                    var id = $(this).data('id');
+                    if (confirm('Are you sure you want to delete this test?')) {
+                        $.ajax({
+                            url: '/api/v1/tests/' + id,
+                            type: 'DELETE',
+                            headers: {
+                                'Authorization': 'Bearer ' + sessionStorage.getItem('jwtToken')
+                            },
+                            success: function() {
+                                table.ajax.reload();
+                            },
+                            error: function(xhr) {
+                                alert('Error deleting test: ' + (xhr.responseJSON?.message || xhr.statusText));
+                            }
+                        });
+                    }
+                });
+
+                // Handle save
+                $('#saveTest').click(function() {
+                    var id = $('#testId').val();
+                    var data = {
+                        productId: $('#productId').val(),
+                        labId: $('#labId').val(),
+                        result: $('#result').val(),
+                        startDate: $('#startDate').val(),
+                        endDate: $('#endDate').val() || null
+                    };
+
+                    if (!data.productId || !data.labId || !data.result || !data.startDate) {
+                        alert('Please fill in all required fields');
+                        return;
+                    }
+
+                    $.ajax({
+                        url: '/api/v1/tests' + (id ? '/' + id : ''),
+                        type: id ? 'PATCH' : 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify(data),
+                        headers: {
+                            'Authorization': 'Bearer ' + sessionStorage.getItem('jwtToken')
+                        },
+                        success: function() {
+                            $('#testModal').modal('hide');
+                            table.ajax.reload();
+                        },
+                        error: function(xhr) {
+                            alert('Error saving test: ' + (xhr.responseJSON?.message || xhr.statusText));
+                        }
+                    });
+                });
+
+                // Handle filters
+                $('#labFilter, #categoryFilter, #resultFilter, #startDateFilter, #endDateFilter').change(function() {
+                    var labId = $('#labFilter').val();
+                    var categoryId = $('#categoryFilter').val();
+                    var result = $('#resultFilter').val();
+                    var startDate = $('#startDateFilter').val();
+                    var endDate = $('#endDateFilter').val();
+
+                    // Apply client-side filtering
+                    var filteredData = table.originalData.filter(function(test) {
+                        var matchLab = !labId || (test.lab && test.lab.id == labId);
+                        var matchCategory = !categoryId || (test.product && test.product.type && test.product.type.category && test.product.type.category.id == categoryId);
+                        var matchResult = !result || test.result === result;
+                        var matchStartDate = !startDate || test.startDate >= startDate;
+                        var matchEndDate = !endDate || (test.endDate && test.endDate <= endDate);
+                        return matchLab && matchCategory && matchResult && matchStartDate && matchEndDate;
+                    });
+
+                    table.clear().rows.add(filteredData).draw();
+                });
+            });
+        </script>
+    </th:block>
+</body>
+</html>

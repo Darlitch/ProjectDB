@@ -107,6 +107,11 @@ public class WebController {
         return "attributes";
     }
 
+    @GetMapping("/tests")
+    public String tests() {
+        return "tests";
+    }
+
     @PostMapping("/logout")
     public String logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         if (authentication != null) {
@@ -114,4 +119,4 @@ public class WebController {
         }
         return "redirect:/login?logout=true";
     }
-} 
+}
