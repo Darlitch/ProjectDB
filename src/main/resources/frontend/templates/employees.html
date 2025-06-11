@@ -47,7 +47,6 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label>&nbsp;</label>
-                            <button class="btn btn-primary btn-block" id="applyFilters">Apply Filters</button>
                         </div>
                     </div>
                 </div>
@@ -289,7 +288,7 @@
                 });
 
                 // Handle filters
-                $('#applyFilters').click(function() {
+                $('#workshopFilter, #categoryFilter').change(function() {
                     var workshopId = $('#workshopFilter').val();
                     var category = $('#categoryFilter').val();
                     
