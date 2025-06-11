@@ -42,6 +42,14 @@
                             </select>
                         </div>
                     </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="productFilter">Product:</label>
+                            <select class="form-control" id="productFilter">
+                                <option value="">All Products</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -382,6 +390,29 @@
                     });
                 }
 
+                // Load products for filter
+                function loadProducts() {
+                    $.ajax({
+                        url: '/api/v1/products',
+                        type: 'GET',
+                        headers: {
+                            'Authorization': 'Bearer ' + sessionStorage.getItem('jwtToken')
+                        },
+                        success: function(products) {
+                            var filterSelect = $('#productFilter');
+                            filterSelect.empty();
+                            filterSelect.append('<option value="">All Products</option>');
+                            products.forEach(function(product) {
+                                var displayText = product.serialNum;
+                                if (product.type) {
+                                    displayText += ' (' + product.type.name + ')';
+                                }
+                                filterSelect.append(`<option value="${product.id}">${displayText}</option>`);
+                            });
+                        }
+                    });
+                }
+
                 // Load employees for worker selection
                 function loadEmployees() {
                     // Сначала получим текущих работников бригады
@@ -421,26 +452,18 @@
                     });
                 }
 
-                // Initialize
-                loadWorkshops();
-                loadSections();
-
                 // Handle workshop filter change
-                $('#workshopFilter, #workshopId').change(function() {
-                    var workshopId = $(this).val();
-                    var isModal = this.id === 'workshopId';
-                    
-                    if (isModal) {
-                        loadSections(workshopId);
-                    } else {
-                        // Apply filter
-                        var sectionId = $('#sectionFilter').val();
-                        applyFilters();
-                    }
+                $('#workshopFilter').change(function() {
+                    applyFilters();
                 });
 
                 // Handle section filter change
                 $('#sectionFilter').change(function() {
+                    applyFilters();
+                });
+
+                // Handle product filter change
+                $('#productFilter').change(function() {
                     applyFilters();
                 });
 
@@ -641,15 +664,26 @@
                 function applyFilters() {
                     var workshopId = $('#workshopFilter').val();
                     var sectionId = $('#sectionFilter').val();
+                    var productId = $('#productFilter').val();
 
-                    var filteredData = brigadesTable.originalData.filter(function(brigade) {
-                        var matchWorkshop = !workshopId || (brigade.section && brigade.section.workshop && brigade.section.workshop.id == workshopId);
-                        var matchSection = !sectionId || (brigade.section && brigade.section.id == sectionId);
-                        return matchWorkshop && matchSection;
-                    });
+                    // Если есть оригинальные данные
+                    if (brigadesTable.originalData) {
+                        var filteredData = brigadesTable.originalData.filter(function(brigade) {
+                            var workshopMatch = !workshopId || (brigade.section && brigade.section.workshop && brigade.section.workshop.id == workshopId);
+                            var sectionMatch = !sectionId || (brigade.section && brigade.section.id == sectionId);
+                            var productMatch = !productId || (brigade.productionProcesses && brigade.productionProcesses.some(process => process.product && process.product.id == productId));
+                            
+                            return workshopMatch && sectionMatch && productMatch;
+                        });
 
-                    brigadesTable.clear().rows.add(filteredData).draw();
+                        brigadesTable.clear().rows.add(filteredData).draw();
+                    }
                 }
+
+                // Initialize
+                loadWorkshops();
+                loadSections();
+                loadProducts();
             });
         </script>
     </th:block>
