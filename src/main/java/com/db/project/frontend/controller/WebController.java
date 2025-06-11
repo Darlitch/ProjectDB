@@ -112,6 +112,11 @@ public class WebController {
         return "attribute-values";
     }
 
+    @GetMapping("/assembly-jobs")
+    public String assemblyJobs() {
+        return "assembly-jobs";
+    }
+
     @GetMapping("/tests")
     public String tests() {
         return "tests";

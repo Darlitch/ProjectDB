@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+
+<head>
+    <title>Assembly Jobs - Project DB</title>
+    <!-- DataTables CSS -->
+    <link th:href="@{/vendor/datatables/dataTables.bootstrap4.min.css}" rel="stylesheet">
+</head>
+
+<body>
+    <div layout:fragment="content">
+        <!-- Page Heading -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Assembly Jobs</h1>
+            <button class="btn btn-primary" id="createAssemblyJobBtn">
+                <i class="fas fa-plus fa-sm"></i> Add Assembly Job
+            </button>
+        </div>
+
+        <!-- Filter -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Filter</h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="workshopFilter">Workshop:</label>
+                            <select class="form-control" id="workshopFilter">
+                                <option value="">All Workshops</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="sectionFilter">Section:</label>
+                            <select class="form-control" id="sectionFilter">
+                                <option value="">All Sections</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Assembly Jobs Table -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Assembly Jobs List</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="assemblyJobsTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Workshop</th>
+                                <th>Section</th>
+                                <th>Production Processes</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Create/Edit Assembly Job Modal -->
+        <div class="modal fade" id="assemblyJobModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="assemblyJobModalTitle">Add Assembly Job</h5>
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span>&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="assemblyJobForm">
+                            <input type="hidden" id="assemblyJobId">
+                            <div class="form-group">
+                                <label for="name">Name:</label>
+                                <input type="text" class="form-control" id="name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="workshopId">Workshop:</label>
+                                <select class="form-control" id="workshopId" required>
+                                    <option value="">Select Workshop</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="sectionId">Section:</label>
+                                <select class="form-control" id="sectionId" required>
+                                    <option value="">Select Section</option>
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary" id="saveAssemblyJob">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <th:block layout:fragment="scripts">
+        <!-- Page level plugins -->
+        <script th:src="@{/vendor/datatables/jquery.dataTables.min.js}"></script>
+        <script th:src="@{/vendor/datatables/dataTables.bootstrap4.min.js}"></script>
+
+        <!-- Page level custom scripts -->
+        <script th:inline="javascript">
+            $(document).ready(function() {
+                // Initialize DataTable
+                var table = $('#assemblyJobsTable').DataTable({
+                    ajax: {
+                        url: '/api/v1/assembly-jobs',
+                        type: 'GET',
+                        beforeSend: function(xhr) {
+                            xhr.setRequestHeader('Authorization', 'Bearer ' + sessionStorage.getItem('jwtToken'));
+                        },
+                        dataSrc: function(data) {
+                            // Store the original data for filtering
+                            table.originalData = data;
+                            return data;
+                        }
+                    },
+                    columns: [
+                        { data: 'id' },
+                        { data: 'name' },
+                        { data: 'section',
+                          render: function(data) {
+                              return data && data.workshop ? data.workshop.name : '';
+                          }
+                        },
+                        { data: 'section',
+                          render: function(data) {
+                              return data ? data.name : '';
+                          }
+                        },
+                        { data: 'productionProcesses',
+                          render: function(data) {
+                              return data ? data.length : 0;
+                          }
+                        },
+                        { data: null,
+                          render: function(data, type, row) {
+                              return `
+                                  <button class="btn btn-primary btn-sm edit-assembly-job" data-id="${row.id}">
+                                      <i class="fas fa-edit"></i>
+                                  </button>
+                                  <button class="btn btn-danger btn-sm delete-assembly-job" data-id="${row.id}">
+                                      <i class="fas fa-trash"></i>
+                                  </button>
+                              `;
+                          }
+                        }
+                    ]
+                });
+
+                // Load workshops for filter and selection
+                function loadWorkshops() {
+                    $.ajax({
+                        url: '/api/v1/workshops',
+                        type: 'GET',
+                        headers: {
+                            'Authorization': 'Bearer ' + sessionStorage.getItem('jwtToken')
+                        },
+                        success: function(workshops) {
+                            var filterSelect = $('#workshopFilter');
+                            var modalSelect = $('#workshopId');
+                            
+                            filterSelect.empty();
+                            modalSelect.empty();
+                            
+                            filterSelect.append('<option value="">All Workshops</option>');
+                            modalSelect.append('<option value="">Select Workshop</option>');
+                            
+                            workshops.forEach(function(workshop) {
+                                filterSelect.append(`<option value="${workshop.id}">${workshop.name}</option>`);
+                                modalSelect.append(`<option value="${workshop.id}">${workshop.name}</option>`);
+                            });
+                        }
+                    });
+                }
+
+                // Load sections for filter and selection
+                function loadSections(workshopId) {
+                    $.ajax({
+                        url: '/api/v1/sections',
+                        type: 'GET',
+                        headers: {
+                            'Authorization': 'Bearer ' + sessionStorage.getItem('jwtToken')
+                        },
+                        success: function(sections) {
+                            var filterSelect = $('#sectionFilter');
+                            var modalSelect = $('#sectionId');
+                            
+                            filterSelect.empty();
+                            modalSelect.empty();
+                            
+                            filterSelect.append('<option value="">All Sections</option>');
+                            modalSelect.append('<option value="">Select Section</option>');
+                            
+                            sections.forEach(function(section) {
+                                if (!workshopId || (section.workshop && section.workshop.id == workshopId)) {
+                                    filterSelect.append(`<option value="${section.id}">${section.name}</option>`);
+                                    modalSelect.append(`<option value="${section.id}">${section.name}</option>`);
+                                }
+                            });
+                        }
+                    });
+                }
+
+                // Initialize
+                loadWorkshops();
+                loadSections();
+
+                // Handle workshop filter change
+                $('#workshopFilter, #workshopId').change(function() {
+                    var workshopId = $(this).val();
+                    var isModal = this.id === 'workshopId';
+                    
+                    if (isModal) {
+                        loadSections(workshopId);
+                    } else {
+                        // Apply filter
+                        var sectionId = $('#sectionFilter').val();
+                        applyFilters();
+                    }
+                });
+
+                // Handle section filter change
+                $('#sectionFilter').change(function() {
+                    applyFilters();
+                });
+
+                // Handle create button
+                $('#createAssemblyJobBtn').click(function() {
+                    $('#assemblyJobForm')[0].reset();
+                    $('#assemblyJobId').val('');
+                    $('#assemblyJobModalTitle').text('Add Assembly Job');
+                    $('#assemblyJobModal').modal('show');
+                });
+
+                // Handle edit button
+                $(document).on('click', '.edit-assembly-job', function() {
+                    var id = $(this).data('id');
+                    $('#assemblyJobModalTitle').text('Edit Assembly Job');
+                    
+                    $.ajax({
+                        url: '/api/v1/assembly-jobs/' + id,
+                        type: 'GET',
+                        headers: {
+                            'Authorization': 'Bearer ' + sessionStorage.getItem('jwtToken')
+                        },
+                        success: function(assemblyJob) {
+                            $('#assemblyJobId').val(assemblyJob.id);
+                            $('#name').val(assemblyJob.name);
+                            
+                            if (assemblyJob.section) {
+                                if (assemblyJob.section.workshop) {
+                                    $('#workshopId').val(assemblyJob.section.workshop.id);
+                                    loadSections(assemblyJob.section.workshop.id);
+                                }
+                                $('#sectionId').val(assemblyJob.section.id);
+                            }
+                            
+                            $('#assemblyJobModal').modal('show');
+                        },
+                        error: function(xhr) {
+                            alert('Error loading assembly job data: ' + (xhr.responseJSON?.message || xhr.statusText));
+                        }
+                    });
+                });
+
+                // Handle delete button
+                $(document).on('click', '.delete-assembly-job', function() {
+                    var id = $(this).data('id');
+                    if (confirm('Are you sure you want to delete this assembly job?')) {
+                        $.ajax({
+                            url: '/api/v1/assembly-jobs/' + id,
+                            type: 'DELETE',
+                            headers: {
+                                'Authorization': 'Bearer ' + sessionStorage.getItem('jwtToken')
+                            },
+                            success: function() {
+                                table.ajax.reload();
+                            },
+                            error: function(xhr) {
+                                alert('Error deleting assembly job: ' + (xhr.responseJSON?.message || xhr.statusText));
+                            }
+                        });
+                    }
+                });
+
+                // Handle save
+                $('#saveAssemblyJob').click(function() {
+                    var id = $('#assemblyJobId').val();
+                    var data = {
+                        name: $('#name').val(),
+                        sectionId: $('#sectionId').val()
+                    };
+
+                    if (!data.name || !data.sectionId) {
+                        alert('Please fill in all required fields');
+                        return;
+                    }
+
+                    $.ajax({
+                        url: '/api/v1/assembly-jobs' + (id ? '/' + id : ''),
+                        type: id ? 'PATCH' : 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify(data),
+                        headers: {
+                            'Authorization': 'Bearer ' + sessionStorage.getItem('jwtToken')
+                        },
+                        success: function() {
+                            $('#assemblyJobModal').modal('hide');
+                            table.ajax.reload();
+                        },
+                        error: function(xhr) {
+                            alert('Error saving assembly job: ' + (xhr.responseJSON?.message || xhr.statusText));
+                        }
+                    });
+                });
+
+                // Handle filters
+                function applyFilters() {
+                    var workshopId = $('#workshopFilter').val();
+                    var sectionId = $('#sectionFilter').val();
+
+                    var filteredData = table.originalData.filter(function(job) {
+                        var matchWorkshop = !workshopId || (job.section && job.section.workshop && job.section.workshop.id == workshopId);
+                        var matchSection = !sectionId || (job.section && job.section.id == sectionId);
+                        return matchWorkshop && matchSection;
+                    });
+
+                    table.clear().rows.add(filteredData).draw();
+                }
+            });
+        </script>
+    </th:block>
+</body>
+</html> 
