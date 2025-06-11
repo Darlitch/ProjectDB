@@ -50,6 +50,9 @@
                             </select>
                         </div>
                     </div>
+                    <div class="col-md-4 d-flex align-items-end">
+                        <button class="btn btn-secondary btn-block" id="resetFilters" type="button">Reset Filters</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -377,6 +380,16 @@
 
                 // Handle filter changes
                 $('#attributeFilter, #productFilter').change(applyFilters);
+
+                // Handle reset filters
+                $('#resetFilters').click(function() {
+                    $('#categoryFilter').val('');
+                    $('#attributeFilter').val('');
+                    $('#productFilter').val('');
+                    // Trigger change to reload table
+                    $('#categoryFilter').trigger('change');
+                    $('#attributeFilter, #productFilter').trigger('change');
+                });
             });
         </script>
     </th:block>
